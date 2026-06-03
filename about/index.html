@@ -50,34 +50,52 @@
     .highlight-box{background:linear-gradient(135deg,#fdf0f4,#fff);border-left:4px solid #e85b81;padding:1.5rem 2rem;border-radius:0 .5rem .5rem 0;margin:1.5rem 0;}
   </style>
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          {"@type":"ListItem","position":1,"name":"トップ","item":"https://sugita-sakuraclinic.com/"},
-          {"@type":"ListItem","position":2,"name":"当院について","item":"https://sugita-sakuraclinic.com/about/"}
-        ]
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "トップ",
+          "item": "https://sugita-sakuraclinic.com/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "当院について",
+          "item": "https://sugita-sakuraclinic.com/about/"
+        }
+      ]
+    },
+    {
+      "@type": "Person",
+      "name": "谷内 直人",
+      "jobTitle": "院長・柔道整復師",
+      "worksFor": {
+        "@type": "MedicalBusiness",
+        "@id": "https://sugita-sakuraclinic.com/#organization"
       },
-      {
-        "@type": "Person",
-        "name": "谷内 直人",
-        "jobTitle": "院長・柔道整復師",
-        "worksFor": {
-          "@type": "MedicalBusiness",
-          "@id": "https://sugita-sakuraclinic.com/#organization"
-        },
-        "hasCredential": {
-          "@type": "EducationalOccupationalCredential",
-          "name": "柔道整復師免許",
-          "credentialCategory": "国家資格"
-        },
-        "image": "https://sugita-sakuraclinic.com/images/director.jpg"
-      }
-    ]
-  }
-  </script>
+      "hasCredential": {
+        "@type": "EducationalOccupationalCredential",
+        "name": "柔道整復師免許",
+        "credentialCategory": "国家資格"
+      },
+      "image": "https://sugita-sakuraclinic.com/images/director.jpg",
+      "description": "横浜市磯子区杉田の整骨院・鍼灸院「杉田さくら柔整治療院」院長。柔道整復師の国家資格を持ち、15年以上の施術実績。交通事故治療・スポーツ障害・骨盤矯正を専門とする。",
+      "knowsAbout": [
+        "柔道整復術",
+        "鍼灸治療",
+        "交通事故後遺症治療",
+        "骨盤矯正",
+        "スポーツ障害リハビリ"
+      ]
+    }
+  ]
+}
+</script>
 </head>
 <body>
   <header class="header" id="header">
@@ -117,7 +135,7 @@
       <div class="page-hero__bg"></div>
       <div class="page-hero__content">
         <span class="page-hero__label">ABOUT US</span>
-        <h1>当院について</h1>
+        <h1>院長紹介｜柔道整復師 谷内直人｜杉田さくら柔整治療院</h1>
         <p>地域の皆様の「健康の拠点」として</p>
       </div>
     </div>

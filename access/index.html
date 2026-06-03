@@ -47,41 +47,74 @@
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-PHF5R7GY8F"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-PHF5R7GY8F');</script>
   <script type="application/ld+json">
-  {
-    "@context": "https://schema.org",
-    "@graph": [
-      {
-        "@type": "BreadcrumbList",
-        "itemListElement": [
-          {"@type":"ListItem","position":1,"name":"トップ","item":"https://sugita-sakuraclinic.com/"},
-          {"@type":"ListItem","position":2,"name":"アクセス","item":"https://sugita-sakuraclinic.com/access/"}
-        ]
-      },
-      {
-        "@type": "MedicalBusiness",
-        "@id": "https://sugita-sakuraclinic.com/#organization",
-        "name": "杉田さくら柔整治療院",
-        "address": {
-          "@type": "PostalAddress",
-          "streetAddress": "杉田1-14-15 エマネート和光1F",
-          "addressLocality": "磯子区",
-          "addressRegion": "横浜市",
-          "postalCode": "235-0033",
-          "addressCountry": "JP"
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "トップ",
+          "item": "https://sugita-sakuraclinic.com/"
         },
-        "geo": {"@type":"GeoCoordinates","latitude":35.3878,"longitude":139.6188},
-        "hasMap": "https://maps.google.com/maps?q=神奈川県横浜市磯子区杉田1-14-15",
-        "areaServed": [
-          {"@type":"City","name":"横浜市磯子区"},
-          {"@type":"City","name":"横浜市金沢区"},
-          {"@type":"City","name":"横浜市南区"},
-          {"@type":"City","name":"横浜市港南区"},
-          {"@type":"City","name":"横浜市栄区"}
-        ]
-      }
-    ]
-  }
-  </script>
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "アクセス",
+          "item": "https://sugita-sakuraclinic.com/access/"
+        }
+      ]
+    },
+    {
+      "@type": "MedicalBusiness",
+      "@id": "https://sugita-sakuraclinic.com/#organization",
+      "name": "杉田さくら柔整治療院",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "杉田1-14-15 エマネート和光1F",
+        "addressLocality": "横浜市磯子区",
+        "addressRegion": "神奈川県",
+        "postalCode": "235-0033",
+        "addressCountry": "JP"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 35.3878,
+        "longitude": 139.6188
+      },
+      "hasMap": "https://maps.google.com/maps?q=神奈川県横浜市磯子区杉田1-14-15",
+      "areaServed": [
+        {
+          "@type": "AdministrativeArea",
+          "name": "横浜市磯子区"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "横浜市金沢区"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "横浜市南区"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "横浜市港南区"
+        },
+        {
+          "@type": "AdministrativeArea",
+          "name": "横浜市栄区"
+        }
+      ],
+      "sameAs": [
+        "https://www.google.com/maps/place/杉田さくら柔整治療院"
+      ],
+      "description": "横浜市磯子区杉田の整骨院・鍼灸院。柔道整復師・鍼灸師による手技療法、交通事故治療（自己負担0円）、骨盤矯正、スポーツ障害対応。京急杉田駅徒歩1分。"
+    }
+  ]
+}
+</script>
 </head>
 <body>
   <header class="header" id="header"><div class="header__inner"><a href="/" class="header__logo"><img src="/images/logo.png" alt="杉田さくら柔整治療院ロゴ" class="header__logo-img"><span class="header__logo-text"><span class="header__logo-main">杉田さくら柔整治療院</span></span></a><nav class="header__nav" id="nav"><ul class="header__nav-list"><li><a href="/" class="header__nav-link">TOP</a></li><li><a href="/about/" class="header__nav-link">当院について</a></li><li><a href="/services/" class="header__nav-link">施術メニュー</a></li><li><a href="/accident/" class="header__nav-link">交通事故治療</a></li><li><a href="/hours/" class="header__nav-link">診療時間</a></li><li><a href="/access/" class="header__nav-link active">アクセス</a></li><li><a href="/faq/" class="header__nav-link">よくある質問</a></li></ul></nav><div class="header__actions"><a href="tel:045-353-8852" class="header__tel"><i class="fas fa-phone-alt"></i><span>045-353-8852</span></a><button class="header__burger" id="burger" aria-label="メニューを開く" aria-expanded="false"><span></span><span></span><span></span></button></div></div></header>
@@ -91,7 +124,7 @@
       <div class="page-hero__bg"></div>
       <div class="page-hero__content">
         <p style="font-size:.8rem;letter-spacing:.2em;opacity:.8;margin-bottom:.5rem;">ACCESS</p>
-        <h1>アクセス・地図</h1>
+        <h1>アクセス・地図｜京急杉田駅徒歩1分｜横浜市磯子区杉田</h1>
         <p>京急杉田駅から徒歩1分・JR新杉田駅から徒歩7分</p>
       </div>
     </div>
