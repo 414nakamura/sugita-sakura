@@ -2039,6 +2039,7 @@ ul, ol {
   }
 }
 /* ===== ページ共通スタイル追加 ===== */
+#hero { margin-top: var(--header-height); }
 .page-hero {
   position: relative;
   height: 360px;
