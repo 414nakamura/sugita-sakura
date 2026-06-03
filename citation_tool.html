@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>杉田さくら柔整治療院 サイテーションツール</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+    background: #f4f6f9;
+    color: #333;
+    min-height: 100vh;
+    padding: 24px 16px;
+  }
+  .container { max-width: 780px; margin: 0 auto; }
+  header {
+    background: #2a7b4f;
+    color: white;
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+  }
+  header h1 { font-size: 1.3rem; font-weight: 700; margin-bottom: 4px; }
+  header p { font-size: 0.85rem; opacity: 0.85; }
+
+  .card {
+    background: white;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  }
+  .card h2 { font-size: 0.95rem; font-weight: 700; color: #2a7b4f; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  label { display: block; font-size: 0.82rem; font-weight: 600; color: #555; margin-bottom: 6px; margin-top: 14px; }
+  label:first-of-type { margin-top: 0; }
+  select, input[type="text"], input[type="date"] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid #ddd;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-family: inherit;
+    background: #fafafa;
+    transition: border-color 0.2s;
+    color: #333;
+  }
+  select:focus, input:focus { outline: none; border-color: #2a7b4f; background: white; }
+
+  .format-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+  .format-tab {
+    padding: 8px 18px;
+    border-radius: 20px;
+    border: 2px solid #ddd;
+    background: white;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: #666;
+  }
+  .format-tab.active {
+    background: #2a7b4f;
+    border-color: #2a7b4f;
+    color: white;
+  }
+  .format-tab:hover:not(.active) { border-color: #2a7b4f; color: #2a7b4f; }
+
+  .citation-output {
+    background: #f8fffe;
+    border: 2px solid #c8e6d4;
+    border-radius: 10px;
+    padding: 18px 20px;
+    font-size: 0.95rem;
+    line-height: 1.8;
+    color: #222;
+    min-height: 80px;
+    word-break: break-all;
+    white-space: pre-wrap;
+  }
+
+  .copy-btn {
+    margin-top: 12px;
+    background: #2a7b4f;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 24px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .copy-btn:hover { background: #1f6040; }
+  .copy-btn.copied { background: #4caf50; }
+
+  .all-citations {
+    margin-top: 8px;
+  }
+  .all-citations .citation-item {
+    border-bottom: 1px solid #eee;
+    padding: 14px 0;
+  }
+  .all-citations .citation-item:last-child { border-bottom: none; }
+  .all-citations .page-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #2a7b4f;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .all-citations .citation-text {
+    font-size: 0.88rem;
+    color: #333;
+    line-height: 1.7;
+    word-break: break-all;
+  }
+  .copy-all-btn {
+    margin-top: 14px;
+    background: #1a5c3a;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 11px 28px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s;
+    width: 100%;
+  }
+  .copy-all-btn:hover { background: #144a2e; }
+  .copy-all-btn.copied { background: #4caf50; }
+
+  .hint { font-size: 0.78rem; color: #888; margin-top: 8px; }
+
+  .refresh-btn {
+    background: none;
+    border: 1.5px solid #2a7b4f;
+    color: #2a7b4f;
+    border-radius: 8px;
+    padding: 7px 16px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    margin-left: 10px;
+  }
+  .refresh-btn:hover { background: #2a7b4f; color: white; }
+
+  .row-flex { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>📋 杉田さくら柔整治療院 サイテーションツール</h1>
+    <p>各ページのURLと形式を選択して、サイテーション文を自動生成・コピーできます</p>
+  </header>
+
+  <!-- 個別サイテーション -->
+  <div class="card">
+    <h2>個別ページのサイテーション</h2>
+
+    <label for="pageSelect">ページを選択</label>
+    <select id="pageSelect" onchange="updateCitation()">
+      <option value="top">トップページ</option>
+      <option value="about">当院について</option>
+      <option value="services">施術メニュー</option>
+      <option value="accident">交通事故治療</option>
+      <option value="hours">診療時間</option>
+      <option value="access">アクセス</option>
+      <option value="faq">よくある質問</option>
+    </select>
+
+    <label for="accessDate">アクセス日</label>
+    <input type="date" id="accessDate" onchange="updateCitation()" />
+
+    <label style="margin-top:16px;">形式を選択</label>
+    <div class="format-tabs">
+      <button class="format-tab active" onclick="setFormat('apa', this)">APA</button>
+      <button class="format-tab" onclick="setFormat('mla', this)">MLA</button>
+      <button class="format-tab" onclick="setFormat('ja', this)">日本語形式</button>
+    </div>
+
+    <div class="citation-output" id="citationOutput"></div>
+    <button class="copy-btn" id="copyBtn" onclick="copyCitation()">
+      <span>📋</span> コピー
+    </button>
+    <p class="hint">クリックするとクリップボードにコピーされます</p>
+  </div>
+
+  <!-- 全ページ一括 -->
+  <div class="card">
+    <div class="row-flex">
+      <h2 style="margin-bottom:0">全ページのサイテーション一覧</h2>
+    </div>
+
+    <label>形式を選択</label>
+    <div class="format-tabs">
+      <button class="format-tab active" id="allApa" onclick="setAllFormat('apa', this)">APA</button>
+      <button class="format-tab" id="allMla" onclick="setAllFormat('mla', this)">MLA</button>
+      <button class="format-tab" id="allJa" onclick="setAllFormat('ja', this)">日本語形式</button>
+    </div>
+
+    <div class="all-citations" id="allCitations"></div>
+    <button class="copy-all-btn" id="copyAllBtn" onclick="copyAll()">📋 全ページをまとめてコピー</button>
+  </div>
+
+</div>
+
+<script>
+const SITE = {
+  name: '杉田さくら柔整治療院',
+  author: '谷内直人',
+  publishYear: '2026',
+  pages: {
+    top:      { title: '杉田さくら柔整治療院｜横浜市磯子区の整骨院・鍼灸院', url: 'https://sugita-sakuraclinic.com/' },
+    about:    { title: '当院について', url: 'https://sugita-sakuraclinic.com/about/' },
+    services: { title: '施術メニュー', url: 'https://sugita-sakuraclinic.com/services/' },
+    accident: { title: '交通事故治療', url: 'https://sugita-sakuraclinic.com/accident/' },
+    hours:    { title: '診療時間', url: 'https://sugita-sakuraclinic.com/hours/' },
+    access:   { title: 'アクセス', url: 'https://sugita-sakuraclinic.com/access/' },
+    faq:      { title: 'よくある質問', url: 'https://sugita-sakuraclinic.com/faq/' },
+  }
+};
+
+let currentFormat = 'apa';
+let allFormat = 'apa';
+
+function today() {
+  return new Date().toISOString().split('T')[0];
+}
+
+function formatDateJa(dateStr) {
+  const d = new Date(dateStr);
+  return `${d.getFullYear()}年${d.getMonth()+1}月${d.getDate()}日`;
+}
+
+function formatDateEn(dateStr) {
+  const d = new Date(dateStr);
+  const months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  return `${months[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`;
+}
+
+function buildCitation(pageKey, format, accessDate) {
+  const p = SITE.pages[pageKey];
+  const d = accessDate || today();
+  const yearNow = new Date(d).getFullYear();
+
+  if (format === 'apa') {
+    return `${SITE.author}. (${SITE.publishYear}). ${p.title}. ${SITE.name}. Retrieved ${formatDateEn(d)}, from ${p.url}`;
+  } else if (format === 'mla') {
+    return `${SITE.author}. "${p.title}." ${SITE.name}, ${SITE.publishYear}, ${p.url}. Accessed ${formatDateEn(d)}.`;
+  } else {
+    return `${SITE.author}「${p.title}」${SITE.name}、${SITE.publishYear}年、${p.url}（${formatDateJa(d)}閲覧）`;
+  }
+}
+
+function updateCitation() {
+  const key = document.getElementById('pageSelect').value;
+  const date = document.getElementById('accessDate').value || today();
+  document.getElementById('citationOutput').textContent = buildCitation(key, currentFormat, date);
+  updateAll();
+}
+
+function setFormat(fmt, btn) {
+  currentFormat = fmt;
+  document.querySelectorAll('.card:first-of-type .format-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  updateCitation();
+}
+
+// 全ページ
+function setAllFormat(fmt, btn) {
+  allFormat = fmt;
+  document.querySelectorAll('#allCitations').forEach(() => {});
+  // reset tabs in second card only
+  const tabs = document.querySelectorAll('.card:nth-child(2) .format-tab');
+  tabs.forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  updateAll();
+}
+
+function updateAll() {
+  const date = document.getElementById('accessDate').value || today();
+  const container = document.getElementById('allCitations');
+  container.innerHTML = '';
+  Object.keys(SITE.pages).forEach(key => {
+    const div = document.createElement('div');
+    div.className = 'citation-item';
+    div.innerHTML = `<div class="page-label">${SITE.pages[key].title.replace('杉田さくら柔整治療院｜横浜市磯子区の整骨院・鍼灸院', 'トップページ')}</div><div class="citation-text">${buildCitation(key, allFormat, date)}</div>`;
+    container.appendChild(div);
+  });
+}
+
+function copyCitation() {
+  const text = document.getElementById('citationOutput').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '✅ コピーしました';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.innerHTML = '<span>📋</span> コピー'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function copyAll() {
+  const date = document.getElementById('accessDate').value || today();
+  const lines = Object.keys(SITE.pages).map(key => buildCitation(key, allFormat, date));
+  navigator.clipboard.writeText(lines.join('\n\n')).then(() => {
+    const btn = document.getElementById('copyAllBtn');
+    btn.textContent = '✅ コピーしました！';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '📋 全ページをまとめてコピー'; btn.classList.remove('copied'); }, 2500);
+  });
+}
+
+// init
+document.getElementById('accessDate').value = today();
+updateCitation();
+updateAll();
+</script>
+</body>
+</html>

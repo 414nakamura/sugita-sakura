@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>杉田さくら柔整治療院 NAP登録ツール</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Helvetica Neue', Arial, 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+    background: #f0f4f2;
+    color: #222;
+    padding: 24px 16px;
+  }
+  .container { max-width: 820px; margin: 0 auto; }
+
+  header {
+    background: linear-gradient(135deg, #1e6b42 0%, #2a9d62 100%);
+    color: white;
+    border-radius: 14px;
+    padding: 26px 30px;
+    margin-bottom: 24px;
+  }
+  header h1 { font-size: 1.25rem; font-weight: 800; margin-bottom: 5px; }
+  header p { font-size: 0.84rem; opacity: 0.88; line-height: 1.6; }
+
+  .card {
+    background: white;
+    border-radius: 14px;
+    padding: 24px 26px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+  }
+  .card-title {
+    font-size: 0.82rem;
+    font-weight: 800;
+    color: #1e6b42;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 7px;
+  }
+
+  /* NAP Fields */
+  .nap-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  @media (max-width: 560px) { .nap-grid { grid-template-columns: 1fr; } }
+  .nap-item {
+    border: 1.5px solid #e0ece6;
+    border-radius: 10px;
+    padding: 12px 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+    background: #fafffe;
+  }
+  .nap-item:hover { border-color: #2a9d62; background: #f0fdf6; }
+  .nap-item.copied { border-color: #4caf50; background: #e8f5e9; }
+  .nap-item .field-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 5px;
+  }
+  .nap-item .field-value {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: #222;
+    line-height: 1.5;
+    word-break: break-all;
+  }
+  .nap-item .copy-tag {
+    position: absolute;
+    top: 8px; right: 10px;
+    font-size: 0.68rem;
+    color: #aaa;
+    transition: color 0.15s;
+  }
+  .nap-item:hover .copy-tag { color: #2a9d62; }
+  .nap-item.copied .copy-tag { color: #4caf50; font-weight: 700; }
+
+  .nap-item.full-width { grid-column: 1 / -1; }
+
+  .copy-all-nap {
+    margin-top: 14px;
+    width: 100%;
+    background: #1e6b42;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 13px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s;
+    font-family: inherit;
+  }
+  .copy-all-nap:hover { background: #155232; }
+  .copy-all-nap.copied { background: #4caf50; }
+
+  /* Directory Table */
+  .progress-bar-wrap {
+    background: #e0ece6;
+    border-radius: 20px;
+    height: 10px;
+    margin-bottom: 18px;
+    overflow: hidden;
+  }
+  .progress-bar {
+    background: linear-gradient(90deg, #2a9d62, #4caf50);
+    height: 100%;
+    border-radius: 20px;
+    transition: width 0.4s ease;
+  }
+  .progress-text {
+    font-size: 0.82rem;
+    color: #555;
+    margin-bottom: 10px;
+    font-weight: 600;
+  }
+
+  .dir-table { width: 100%; border-collapse: collapse; }
+  .dir-table th {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #888;
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 2px solid #e8f0ec;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .dir-table td {
+    padding: 11px 10px;
+    border-bottom: 1px solid #f0f5f2;
+    vertical-align: middle;
+  }
+  .dir-table tr:last-child td { border-bottom: none; }
+  .dir-table tr:hover td { background: #f7fdf9; }
+
+  .site-name { font-weight: 700; font-size: 0.9rem; color: #222; }
+  .site-desc { font-size: 0.78rem; color: #888; margin-top: 2px; }
+  .priority-badge {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+  .p-high { background: #ffebee; color: #c62828; }
+  .p-mid  { background: #fff8e1; color: #f57f17; }
+  .p-low  { background: #e8f5e9; color: #2e7d32; }
+
+  .visit-btn {
+    display: inline-block;
+    padding: 6px 14px;
+    background: #f0fdf6;
+    border: 1.5px solid #2a9d62;
+    color: #1e6b42;
+    border-radius: 7px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.15s;
+    white-space: nowrap;
+  }
+  .visit-btn:hover { background: #2a9d62; color: white; }
+
+  .check-wrap { display: flex; justify-content: center; }
+  .check-wrap input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: #2a9d62;
+  }
+
+  .status-label {
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+  }
+  .status-done { background: #e8f5e9; color: #2e7d32; }
+  .status-pending { background: #f5f5f5; color: #999; }
+
+  .filter-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1.5px solid #ddd;
+    background: white;
+    font-size: 0.78rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: #666;
+    font-family: inherit;
+    transition: all 0.12s;
+  }
+  .filter-btn.active { background: #1e6b42; border-color: #1e6b42; color: white; }
+  .filter-btn:hover:not(.active) { border-color: #1e6b42; color: #1e6b42; }
+
+  .reset-link {
+    font-size: 0.78rem;
+    color: #999;
+    cursor: pointer;
+    text-decoration: underline;
+    align-self: center;
+  }
+  .reset-link:hover { color: #e53935; }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <h1>🌸 杉田さくら柔整治療院 NAP登録管理ツール</h1>
+  <p>外部ディレクトリへの院情報登録を一元管理します。各フィールドをクリックするとコピーできます。</p>
+</header>
+
+<!-- NAP情報パネル -->
+<div class="card">
+  <div class="card-title">📋 院情報（クリックでコピー）</div>
+  <div class="nap-grid">
+    <div class="nap-item" onclick="copyField(this, '杉田さくら柔整治療院')">
+      <div class="field-label">院名（正式）</div>
+      <div class="field-value">杉田さくら柔整治療院</div>
+      <span class="copy-tag">クリックでコピー</span>
+    </div>
+    <div class="nap-item" onclick="copyField(this, 'Sugita Sakura Judo-Seifu Clinic')">
+      <div class="field-label">院名（英語）</div>
+      <div class="field-value">Sugita Sakura Judo-Seifu Clinic</div>
+      <span class="copy-tag">クリックでコピー</span>
+    </div>
+    <div class="nap-item" onclick="copyField(this, '045-353-8852')">
+      <div class="field-label">電話番号</div>
+      <div class="field-value">045-353-8852</div>
+      <span class="copy-tag">クリックでコピー</span>
+    </div>
+    <div class="nap-item" onclick="copyField(this, 'https://sugita-sakuraclinic.com/')">
+      <div class="field-label">ウェブサイト</div>
+      <div class="field-value">https://sugita-sakuraclinic.com/</div>
+      <span class="copy-tag">クリックでコピー</span>
+    </div>
+    <div class="nap-item" onclick="copyField(this, '〒235-0033 神奈川県横浜市磯子区杉田1-14-15 エマネート和光1F')">
+      <div class="field-label">住所（日本語）</div>
+      <div class="field-value">〒235-0033 神奈川県横浜市磯子区杉田1-14-15 エマネート和光1F</div>
+      <span class="copy-tag">クリックでコピー</span>
+    </div>
+    <div class="nap-item" onclick="copyField(this, '1-14-15 Sugita, Isogo-ku, Yokohama-shi, Kanagawa 235-0033')">
+      <div class="field-label">住所（英語）</div>
+      <div class="field-value">1-14-15 Sugita, Isogo-ku, Yokohama-shi, Kanagawa 235-0033</div>
+      <span class="copy-tag">クリックでコピー</span>
+    </div>
+    <div class="nap-item" onclick="copyField(this, '235-0033')">
+      <div class="field-label">郵便番号</div>
+      <div class="field-value">235-0033</div>
+      <span class="copy-tag">クリックでコピー</span>
+    </div>
+    <div class="nap-item" onclick="copyField(this, '神奈川県横浜市磯子区')">
+      <div class="field-label">都道府県・市区町村</div>
+      <div class="field-value">神奈川県横浜市磯子区</div>
+      <span class="copy-tag">クリックでコピー</span>
+    </div>
+    <div class="nap-item" onclick="copyField(this, '整骨院・鍼灸院・柔整治療院')">
+      <div class="field-label">業種カテゴリ</div>
+      <div class="field-value">整骨院・鍼灸院・柔整治療院</div>
+      <span class="copy-tag">クリックでコピー</span>
+    </div>
+    <div class="nap-item" onclick="copyField(this, '谷内直人（たにうち なおと）')">
+      <div class="field-label">院長名</div>
+      <div class="field-value">谷内直人（たにうち なおと）</div>
+      <span class="copy-tag">クリックでコピー</span>
+    </div>
+    <div class="nap-item full-width" onclick="copyField(this, '横浜市磯子区杉田の整骨院・鍼灸院。交通事故治療（自己負担0円）・むちうち・肩こり・腰痛・骨盤矯正。杉田駅徒歩1分。国家資格者が丁寧に対応します。')">
+      <div class="field-label">院の説明文（短め）</div>
+      <div class="field-value">横浜市磯子区杉田の整骨院・鍼灸院。交通事故治療（自己負担0円）・むちうち・肩こり・腰痛・骨盤矯正。杉田駅徒歩1分。国家資格者が丁寧に対応します。</div>
+      <span class="copy-tag">クリックでコピー</span>
+    </div>
+    <div class="nap-item full-width" onclick="copyField(this, '杉田さくら柔整治療院は、神奈川県横浜市磯子区杉田にある整骨院・鍼灸院です。柔道整復師・鍼灸師の国家資格を持つスタッフが、交通事故治療（自賠責保険適用・自己負担0円）、肩こり・腰痛・骨盤矯正・スポーツ障害など幅広いお体のお悩みに丁寧に対応いたします。JR新杉田駅から徒歩7分、京急杉田駅から徒歩1分。近隣駐車場もご利用いただけます。')">
+      <div class="field-label">院の説明文（長め）</div>
+      <div class="field-value">杉田さくら柔整治療院は、神奈川県横浜市磯子区杉田にある整骨院・鍼灸院です。柔道整復師・鍼灸師の国家資格を持つスタッフが、交通事故治療（自賠責保険適用・自己負担0円）、肩こり・腰痛・骨盤矯正・スポーツ障害など幅広いお体のお悩みに丁寧に対応いたします。JR新杉田駅から徒歩7分、京急杉田駅から徒歩1分。近隣駐車場もご利用いただけます。</div>
+      <span class="copy-tag">クリックでコピー</span>
+    </div>
+    <div class="nap-item" onclick="copyField(this, '肩こり,腰痛,交通事故治療,むちうち,骨盤矯正,鍼灸,整骨院,横浜市磯子区,杉田駅,スポーツ障害')">
+      <div class="field-label">キーワード（タグ）</div>
+      <div class="field-value">肩こり,腰痛,交通事故治療,むちうち,骨盤矯正,鍼灸,整骨院,横浜市磯子区,杉田駅,スポーツ障害</div>
+      <span class="copy-tag">クリックでコピー</span>
+    </div>
+    <div class="nap-item" onclick="copyField(this, '画像URL: https://sugita-sakuraclinic.com/images/top-main.png')">
+      <div class="field-label">メイン画像URL</div>
+      <div class="field-value">https://sugita-sakuraclinic.com/images/top-main.png</div>
+      <span class="copy-tag">クリックでコピー</span>
+    </div>
+  </div>
+  <button class="copy-all-nap" id="copyAllNap" onclick="copyAllNap()">📋 全情報をまとめてコピー</button>
+</div>
+
+<!-- ディレクトリ一覧 -->
+<div class="card">
+  <div class="card-title">🗂 登録先ディレクトリ一覧</div>
+
+  <div class="progress-text" id="progressText">登録済み: 0 / 25サイト</div>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar" id="progressBar" style="width:0%"></div>
+  </div>
+
+  <div class="filter-row">
+    <button class="filter-btn active" onclick="filterDir('all', this)">すべて</button>
+    <button class="filter-btn" onclick="filterDir('high', this)">🔴 最優先</button>
+    <button class="filter-btn" onclick="filterDir('mid', this)">🟡 優先</button>
+    <button class="filter-btn" onclick="filterDir('low', this)">🟢 推奨</button>
+    <button class="filter-btn" onclick="filterDir('done', this)">✅ 登録済み</button>
+    <button class="filter-btn" onclick="filterDir('pending', this)">⬜ 未登録</button>
+    <span class="reset-link" onclick="resetAll()">✕ チェックをリセット</span>
+  </div>
+
+  <table class="dir-table" id="dirTable">
+    <thead>
+      <tr>
+        <th>サイト</th>
+        <th>優先度</th>
+        <th>登録先</th>
+        <th style="text-align:center">完了</th>
+      </tr>
+    </thead>
+    <tbody id="dirBody"></tbody>
+  </table>
+</div>
+
+</div>
+
+<script>
+const DIRS = [
+  { name: 'Googleビジネスプロフィール', desc: 'Google検索・Mapsに表示。SEO効果最大', priority: 'high', url: 'https://business.google.com/' },
+  { name: 'Yahoo!ロコ', desc: 'Yahoo!検索・地図に反映。国内利用者多数', priority: 'high', url: 'https://loco.yahoo.co.jp/' },
+  { name: 'エキテン', desc: '整骨院・治療院の専門ディレクトリ。口コミも集まりやすい', priority: 'high', url: 'https://www.ekiten.jp/' },
+  { name: '接骨ネット', desc: '整骨院・接骨院の専門検索サービス', priority: 'high', url: 'https://www.sekkotsu.net/' },
+  { name: 'ホットペッパービューティー', desc: '整体・マッサージ系は掲載可。予約機能あり', priority: 'high', url: 'https://beauty.hotpepper.jp/' },
+  { name: 'Apple Maps Connect', desc: 'iPhoneユーザーへの訴求。Siri検索にも影響', priority: 'high', url: 'https://mapsconnect.apple.com/' },
+  { name: 'iタウンページ（NTT）', desc: 'NTT公式の電話帳サービス。信頼性高い', priority: 'mid', url: 'https://itp.ne.jp/' },
+  { name: 'Bing Places', desc: 'Bingマップ・Copilot検索への反映', priority: 'mid', url: 'https://www.bingplaces.com/' },
+  { name: 'Foursquare', desc: '海外向けも含む位置情報サービス', priority: 'mid', url: 'https://foursquare.com/businesses/' },
+  { name: 'カラダメンテ', desc: '整骨院・鍼灸院・整体専門の口コミサービス', priority: 'mid', url: 'https://www.karadamente.com/' },
+  { name: 'EPARKリラク＆エステ', desc: '治療系・リラクゼーション系の予約サービス', priority: 'mid', url: 'https://relax.epark.jp/' },
+  { name: 'マピオン', desc: '地図・地域情報ポータル', priority: 'mid', url: 'https://www.mapion.co.jp/' },
+  { name: 'ジョルダン乗換案内（駅周辺）', desc: '駅からの周辺施設として掲載可', priority: 'mid', url: 'https://www.jorudan.co.jp/' },
+  { name: 'Wantedly（会社ページ）', desc: '採用・ブランディング目的のビジネスSNS', priority: 'mid', url: 'https://www.wantedly.com/' },
+  { name: 'Facebook ページ', desc: 'SNS集客＋Googleがリンクを認識', priority: 'mid', url: 'https://www.facebook.com/pages/create' },
+  { name: 'Instagram ビジネスアカウント', desc: 'ビジュアル集客＋プロフィールにURL掲載', priority: 'mid', url: 'https://www.instagram.com/' },
+  { name: 'LINE公式アカウント', desc: '予約・お知らせ配信。日本最大のSNS', priority: 'mid', url: 'https://www.linebiz.com/jp/' },
+  { name: '生活ガイド.com', desc: '地域の生活情報ポータル（自治体連携あり）', priority: 'low', url: 'https://www.seikatsu-guide.com/' },
+  { name: 'くらしデータ', desc: '地域の医院・クリニック情報サービス', priority: 'low', url: 'https://www.kurashidata.com/' },
+  { name: 'Yelp Japan', desc: '口コミサービス（海外観光客・英語圏向け）', priority: 'low', url: 'https://www.yelp.co.jp/business_owners' },
+  { name: 'カーナビ連携（NAVITIME）', desc: 'ナビタイムへの施設登録でカーナビに反映', priority: 'low', url: 'https://business.navitime.co.jp/' },
+  { name: 'じゃらん net（施設）', desc: '地域の観光・生活情報として掲載', priority: 'low', url: 'https://www.jalan.net/' },
+  { name: 'Twitter/X ビジネス', desc: 'プロフィールにURL・住所掲載でNAP補強', priority: 'low', url: 'https://twitter.com/' },
+  { name: 'Wikipedia / Wikiwand', desc: '知名度が上がったら作成を検討', priority: 'low', url: 'https://ja.wikipedia.org/' },
+  { name: 'OpenStreetMap', desc: 'オープンソース地図。各種サービスが参照', priority: 'low', url: 'https://www.openstreetmap.org/' },
+];
+
+let checks = JSON.parse(localStorage.getItem('nap_checks') || '{}');
+let currentFilter = 'all';
+
+function saveChecks() {
+  localStorage.setItem('nap_checks', JSON.stringify(checks));
+}
+
+function renderTable() {
+  const tbody = document.getElementById('dirBody');
+  tbody.innerHTML = '';
+  let shown = 0;
+
+  DIRS.forEach((d, i) => {
+    const isDone = !!checks[i];
+    if (currentFilter === 'high' && d.priority !== 'high') return;
+    if (currentFilter === 'mid' && d.priority !== 'mid') return;
+    if (currentFilter === 'low' && d.priority !== 'low') return;
+    if (currentFilter === 'done' && !isDone) return;
+    if (currentFilter === 'pending' && isDone) return;
+    shown++;
+
+    const pMap = { high: ['最優先','p-high'], mid: ['優先','p-mid'], low: ['推奨','p-low'] };
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>
+        <div class="site-name">${d.name}</div>
+        <div class="site-desc">${d.desc}</div>
+      </td>
+      <td><span class="priority-badge ${pMap[d.priority][1]}">${pMap[d.priority][0]}</span></td>
+      <td><a class="visit-btn" href="${d.url}" target="_blank" rel="noopener">登録ページへ →</a></td>
+      <td>
+        <div class="check-wrap">
+          <input type="checkbox" ${isDone ? 'checked' : ''} onchange="toggleCheck(${i}, this)" />
+        </div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  updateProgress();
+}
+
+function toggleCheck(i, el) {
+  checks[i] = el.checked;
+  saveChecks();
+  updateProgress();
+  if (currentFilter === 'done' || currentFilter === 'pending') renderTable();
+}
+
+function updateProgress() {
+  const total = DIRS.length;
+  const done = Object.values(checks).filter(Boolean).length;
+  const pct = Math.round(done / total * 100);
+  document.getElementById('progressText').textContent = `登録済み: ${done} / ${total}サイト（${pct}%）`;
+  document.getElementById('progressBar').style.width = pct + '%';
+}
+
+function filterDir(f, btn) {
+  currentFilter = f;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+
+function resetAll() {
+  if (confirm('チェックをすべてリセットしますか？')) {
+    checks = {};
+    saveChecks();
+    renderTable();
+  }
+}
+
+// Copy field
+function copyField(el, text) {
+  navigator.clipboard.writeText(text).then(() => {
+    const tag = el.querySelector('.copy-tag');
+    el.classList.add('copied');
+    tag.textContent = '✅ コピー済み';
+    setTimeout(() => { el.classList.remove('copied'); tag.textContent = 'クリックでコピー'; }, 1800);
+  });
+}
+
+// Copy all NAP
+function copyAllNap() {
+  const text = `【院名】杉田さくら柔整治療院
+【電話】045-353-8852
+【住所】〒235-0033 神奈川県横浜市磯子区杉田1-14-15 エマネート和光1F
+【URL】https://sugita-sakuraclinic.com/
+【業種】整骨院・鍼灸院・柔整治療院
+【院長】谷内直人（たにうち なおと）
+【説明】横浜市磯子区杉田の整骨院・鍼灸院。交通事故治療（自己負担0円）・むちうち・肩こり・腰痛・骨盤矯正。杉田駅徒歩1分。国家資格者が丁寧に対応します。
+【キーワード】肩こり,腰痛,交通事故治療,むちうち,骨盤矯正,鍼灸,整骨院,横浜市磯子区,杉田駅,スポーツ障害`;
+
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById('copyAllNap');
+    btn.textContent = '✅ コピーしました！';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = '📋 全情報をまとめてコピー'; btn.classList.remove('copied'); }, 2200);
+  });
+}
+
+renderTable();
+</script>
+</body>
+</html>
