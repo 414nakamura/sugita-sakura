@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://sugita-sakuraclinic.com/sitemap.xml
