@@ -2157,8 +2157,8 @@ ul, ol {
   .header__nav { display: none; }
 
   /* ページヒーロー */
-  .page-hero { height: 220px !important; }
-  .page-hero h1 { font-size: 1.6rem !important; }
+  .page-hero { height: auto !important; min-height: 200px; }
+  .page-hero h1 { font-size: 1.35rem !important; }
   .page-hero p { font-size: 0.9rem !important; }
 
   /* 2カラム → 1カラム */
