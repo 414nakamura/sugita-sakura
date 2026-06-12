@@ -2279,3 +2279,33 @@ ul, ol {
   .page-img { height: auto !important; max-height: none !important; }
   .three-col .card-img { height: auto !important; }
 }
+
+/* ===== ドロップダウンナビ ===== */
+.header__nav-item--dropdown { position: relative; }
+.header__dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #fff;
+  border: 1px solid #f0e0e3;
+  border-radius: .5rem;
+  min-width: 160px;
+  box-shadow: 0 4px 16px rgba(0,0,0,.1);
+  list-style: none;
+  padding: .4rem 0;
+  z-index: 200;
+  white-space: nowrap;
+}
+.header__nav-item--dropdown:hover .header__dropdown { display: block; }
+.header__dropdown-link {
+  display: block;
+  padding: .45rem 1.1rem;
+  font-size: .82rem;
+  color: var(--color-text);
+  text-decoration: none;
+  transition: background .15s, color .15s;
+}
+.header__dropdown-link:hover { background: #fdf0f4; color: #e85b81; }
+@media(max-width:768px) { .header__nav-item--dropdown { display: none; } }
