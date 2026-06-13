@@ -364,6 +364,19 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // ===================================================
+  // GA4 PHONE CLICK TRACKING
+  // ===================================================
+  document.querySelectorAll('a[href^="tel:"]').forEach(function(el) {
+    el.addEventListener('click', function() {
+      if (typeof gtag === 'function') {
+        gtag('event', 'phone_click', {
+          'phone_number': this.href.replace('tel:', '')
+        });
+      }
+    });
+  });
+
+  // ===================================================
   // CONSOLE LOG (Dev)
   // ===================================================
   console.log('%c🌸 杉田さくら鍼灸治療院', 'color: #e85b81; font-size: 16px; font-weight: bold;');
