@@ -377,6 +377,34 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // ===================================================
+  // FOOTER TREATMENT LINKS
+  // ===================================================
+  const footerNav = document.querySelector('.footer__nav');
+
+  if (footerNav && !footerNav.querySelector('a[href="/neck-pain/"]')) {
+    const guideColumn = Array.from(footerNav.querySelectorAll('.footer__nav-col')).find((column) => {
+      return column.querySelector('.footer__nav-title')?.textContent.trim() === 'ご案内';
+    });
+    const treatmentColumn = document.createElement('div');
+
+    treatmentColumn.className = 'footer__nav-col';
+    treatmentColumn.innerHTML = [
+      '<h3 class="footer__nav-title">症状・治療</h3>',
+      '<ul>',
+      '<li><a href="/lumbar-pain/">腰痛・ぎっくり腰</a></li>',
+      '<li><a href="/shoulder-pain/">肩こり・四十肩</a></li>',
+      '<li><a href="/knee-pain/">膝の痛み</a></li>',
+      '<li><a href="/tendinitis/">腱鞘炎・手首の痛み</a></li>',
+      '<li><a href="/ankle-pain/">足首の痛み・捻挫</a></li>',
+      '<li><a href="/finger-injury/">突き指・指の痛み</a></li>',
+      '<li><a href="/neck-pain/">首痛・寝違え</a></li>',
+      '</ul>'
+    ].join('');
+
+    footerNav.insertBefore(treatmentColumn, guideColumn || null);
+  }
+
+  // ===================================================
   // CONSOLE LOG (Dev)
   // ===================================================
   console.log('%c🌸 杉田さくら鍼灸治療院', 'color: #e85b81; font-size: 16px; font-weight: bold;');
