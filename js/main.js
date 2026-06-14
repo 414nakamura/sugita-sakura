@@ -14,6 +14,93 @@ document.addEventListener('DOMContentLoaded', () => {
   const heroSection = document.getElementById('hero');
 
   // ===================================================
+  // GLOBAL NAV SERVICE FINDER
+  // ===================================================
+  const symptomLinks = [
+    ['腰痛・ぎっくり腰', '/lumbar-pain/'],
+    ['肩こり・四十肩', '/shoulder-pain/'],
+    ['膝の痛み', '/knee-pain/'],
+    ['腱鞘炎・手首の痛み', '/tendinitis/'],
+    ['足首の痛み・捻挫', '/ankle-pain/'],
+    ['突き指・指の痛み', '/finger-injury/'],
+    ['首痛・寝違え', '/neck-pain/']
+  ];
+
+  const methodLinks = [
+    ['外傷のケア', '/trauma-care/'],
+    ['交通事故治療', '/accident/'],
+    ['鍼灸施術', '/acupuncture/'],
+    ['骨盤矯正', '/pelvic-correction/'],
+    ['スポーツ障害', '/sports-injury/'],
+    ['リハビリ・後療法', '/rehabilitation/'],
+    ['手技療法', '/services/#manual-therapy'],
+    ['電気治療器', '/services/#electrotherapy'],
+    ['腰椎牽引療法', '/services/#lumbar-traction'],
+    ['アクアタイザー', '/services/#aquatizer']
+  ];
+
+  function buildDropdownColumn(title, links) {
+    return [
+      '<li class="header__dropdown-col">',
+      `<span class="header__dropdown-title">${title}</span>`,
+      '<ul class="header__dropdown-list">',
+      links.map(([label, href]) => `<li><a href="${href}" class="header__dropdown-link">${label}</a></li>`).join(''),
+      '</ul>',
+      '</li>'
+    ].join('');
+  }
+
+  function setupServiceNavigation() {
+    const dropdown = document.querySelector('.header__dropdown');
+
+    if (dropdown) {
+      dropdown.classList.add('header__dropdown--mega');
+      dropdown.innerHTML = [
+        buildDropdownColumn('症状から探す', symptomLinks),
+        buildDropdownColumn('治療方法から探す', methodLinks)
+      ].join('');
+    }
+
+    const mobileList = document.querySelector('.mobile-menu__list');
+    const servicesLinkItem = mobileList?.querySelector('a[href="/services/"]')?.closest('li');
+    const accidentLinkItem = mobileList?.querySelector('a[href="/accident/"]')?.closest('li');
+
+    if (mobileList && servicesLinkItem && accidentLinkItem && !mobileList.querySelector('.mobile-menu__section')) {
+      let node = servicesLinkItem.nextElementSibling;
+
+      while (node && node !== accidentLinkItem) {
+        const next = node.nextElementSibling;
+        node.remove();
+        node = next;
+      }
+
+      const fragment = document.createDocumentFragment();
+
+      [
+        ['症状から探す', symptomLinks],
+        ['治療方法から探す', methodLinks]
+      ].forEach(([title, links]) => {
+        const sectionItem = document.createElement('li');
+
+        sectionItem.className = 'mobile-menu__section';
+        sectionItem.textContent = title;
+        fragment.appendChild(sectionItem);
+
+        links.forEach(([label, href]) => {
+          const item = document.createElement('li');
+
+          item.innerHTML = `<a href="${href}" class="mobile-menu__link" style="font-size:.88rem;padding-left:2rem;"><i class="fas fa-chevron-right" style="font-size:.7em;"></i>${label}</a>`;
+          fragment.appendChild(item);
+        });
+      });
+
+      mobileList.insertBefore(fragment, accidentLinkItem);
+    }
+  }
+
+  setupServiceNavigation();
+
+  // ===================================================
   // HEADER SCROLL EFFECT
   // ===================================================
   let lastScroll = 0;
@@ -420,16 +507,27 @@ document.addEventListener('DOMContentLoaded', () => {
       methodColumn.innerHTML = [
         '<h3 class="footer__nav-title">治療方法から探す</h3>',
         '<ul>',
-        '<li><a href="/trauma-care/">外傷のケア</a></li>',
-        '<li><a href="/accident/">交通事故治療</a></li>',
-        '<li><a href="/acupuncture/">鍼灸施術</a></li>',
-        '<li><a href="/pelvic-correction/">骨盤矯正</a></li>',
-        '<li><a href="/sports-injury/">スポーツ障害</a></li>',
-        '<li><a href="/rehabilitation/">リハビリ・後療法</a></li>',
+        methodLinks.map(([label, href]) => `<li><a href="${href}">${label}</a></li>`).join(''),
         '</ul>'
       ].join('');
 
       footerNav.insertBefore(methodColumn, guideColumn || null);
+    } else {
+      const methodColumn = Array.from(footerNav.querySelectorAll('.footer__nav-col')).find((column) => {
+        return column.querySelector('.footer__nav-title')?.textContent.trim() === '治療方法から探す';
+      });
+      const methodList = methodColumn?.querySelector('ul');
+
+      if (methodList) {
+        methodLinks.forEach(([label, href]) => {
+          if (!methodList.querySelector(`a[href="${href}"]`)) {
+            const item = document.createElement('li');
+
+            item.innerHTML = `<a href="${href}">${label}</a>`;
+            methodList.appendChild(item);
+          }
+        });
+      }
     }
   }
 
