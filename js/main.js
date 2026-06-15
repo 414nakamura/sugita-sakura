@@ -7,8 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // --- Elements ---
   const header = document.getElementById('header');
-  const burger = document.getElementById('burger');
-  const mobileMenu = document.getElementById('mobileMenu');
+  let burger = document.getElementById('burger');
+  let mobileMenu = document.getElementById('mobileMenu');
   const backToTop = document.getElementById('backToTop');
   const fixedCta = document.getElementById('fixedCta');
   const heroSection = document.getElementById('hero');
@@ -104,6 +104,97 @@ document.addEventListener('DOMContentLoaded', () => {
     document.head.appendChild(style);
   }
 
+  function injectColumnStyles() {
+    if (!document.querySelector('.note-column-hero, .note-column-list, .note-summary') || document.getElementById('columnReadabilityStyles')) return;
+
+    const style = document.createElement('style');
+
+    style.id = 'columnReadabilityStyles';
+    style.textContent = `
+      body:has(.note-column-hero) { background:#fffafa; }
+      .note-column-hero { padding:clamp(3rem, 7vw, 5.5rem) 1rem 2rem !important; background:linear-gradient(180deg,#fff6f8 0%,#fff 100%) !important; }
+      .note-column-hero h1,
+      .note-column-hero > p[style] { max-width:960px; margin:.25rem auto .75rem !important; font-size:clamp(1.7rem, 3.5vw, 2.45rem) !important; line-height:1.35 !important; letter-spacing:0 !important; }
+      .note-column-hero > p:first-child:not([style]) { color:#e85b81 !important; font-size:.78rem !important; font-weight:700 !important; letter-spacing:.16em !important; text-transform:uppercase; margin:0 auto .5rem !important; }
+      .note-column-hero > p:last-child:not([style]) { max-width:720px !important; font-size:.98rem !important; line-height:1.8 !important; }
+      .note-column-list { max-width:1080px; margin:0 auto; display:grid !important; grid-template-columns:1fr !important; gap:1rem !important; }
+      .note-column-card { display:grid !important; grid-template-columns:260px minmax(0,1fr) !important; border-radius:8px !important; box-shadow:0 4px 18px rgba(30,15,20,.06) !important; }
+      .note-column-card img { height:100% !important; min-height:176px !important; aspect-ratio:auto !important; object-fit:cover !important; }
+      .note-column-card__body { padding:1.15rem 1.25rem !important; gap:.45rem !important; min-width:0; }
+      .note-column-card time,
+      .note-summary__date { color:#9b7c86 !important; font-size:.82rem !important; font-weight:700 !important; }
+      .note-column-card h2 { font-size:1rem !important; line-height:1.55 !important; }
+      .note-column-card p { font-size:.88rem !important; line-height:1.75 !important; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+      .note-column-card a { display:inline-flex; align-items:center; align-self:flex-start; margin-top:.25rem !important; padding:.55rem .9rem; border-radius:999px; background:#fce4ec; color:#c4385e !important; font-size:.86rem; text-decoration:none; }
+      .note-summary { max-width:860px !important; background:#fff; border:1px solid #f0e0e3; border-radius:8px; padding:clamp(1rem, 3vw, 2rem) !important; box-shadow:0 4px 20px rgba(30,15,20,.05); }
+      .note-summary__image { border-radius:8px !important; margin-bottom:1rem !important; }
+      .note-summary h1 { font-size:clamp(1.45rem, 3vw, 2rem) !important; line-height:1.55 !important; margin:.6rem 0 1rem !important; overflow-wrap:anywhere; }
+      .note-summary__box { padding:1.1rem 1.25rem !important; margin:1.25rem 0 !important; border-radius:0 8px 8px 0 !important; }
+      .note-summary p { font-size:.98rem; line-height:1.9; }
+      .note-summary .btn { white-space:normal; text-align:center; justify-content:center; }
+      @media (max-width:720px) {
+        body:has(.note-column-hero) .header__logo-main { font-size:15px; }
+        .note-column-hero { padding:2.25rem 1rem 1.25rem !important; text-align:left !important; }
+        .note-column-hero h1,
+        .note-column-hero > p[style] { font-size:1.55rem !important; line-height:1.45 !important; }
+        .note-column-hero > p:last-child:not([style]) { font-size:.9rem !important; }
+        body:has(.note-column-hero) .section { padding:28px 0 !important; }
+        .note-column-list { gap:.85rem !important; }
+        .note-column-card { grid-template-columns:112px minmax(0,1fr) !important; min-height:136px; }
+        .note-column-card img { min-height:136px !important; height:100% !important; }
+        .note-column-card__body { padding:.85rem !important; gap:.35rem !important; }
+        .note-column-card h2 { font-size:.92rem !important; line-height:1.5 !important; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+        .note-column-card p { display:none !important; }
+        .note-column-card a { padding:.4rem .7rem; font-size:.8rem; }
+        .note-summary { padding:1rem !important; border-left:0; border-right:0; border-radius:0; box-shadow:none; }
+        .note-summary h1 { font-size:1.35rem !important; line-height:1.55 !important; }
+        .note-summary__box { padding:1rem !important; }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  function ensureMobileNavigation() {
+    if (!header) return;
+
+    const navLinks = Array.from(document.querySelectorAll('.header__nav-list > li > a'));
+    let actions = header.querySelector('.header__actions');
+
+    if (!actions) {
+      actions = document.createElement('div');
+      actions.className = 'header__actions';
+      header.querySelector('.header__inner')?.appendChild(actions);
+    }
+
+    if (!burger) {
+      burger = document.createElement('button');
+      burger.className = 'header__burger';
+      burger.id = 'burger';
+      burger.type = 'button';
+      burger.setAttribute('aria-label', 'メニューを開く');
+      burger.setAttribute('aria-expanded', 'false');
+      burger.innerHTML = '<span></span><span></span><span></span>';
+      actions.appendChild(burger);
+    }
+
+    if (!mobileMenu && navLinks.length) {
+      mobileMenu = document.createElement('div');
+      mobileMenu.className = 'mobile-menu';
+      mobileMenu.id = 'mobileMenu';
+      mobileMenu.setAttribute('aria-hidden', 'true');
+      mobileMenu.innerHTML = [
+        '<nav><ul class="mobile-menu__list">',
+        navLinks.map((link) => {
+          const href = link.getAttribute('href');
+          const text = link.textContent.trim().replace(/\s+/g, '');
+          return `<li><a href="${href}" class="mobile-menu__link">${text}</a></li>`;
+        }).join(''),
+        '</ul><a href="tel:045-353-8852" class="mobile-menu__tel"><i class="fas fa-phone-alt"></i> 045-353-8852</a></nav>'
+      ].join('');
+      header.insertAdjacentElement('afterend', mobileMenu);
+    }
+  }
+
   function reorderTopHero() {
     const hero = document.getElementById('hero');
     const imageBlock = hero?.querySelector('img[src$="top-main.png"]')?.closest('div');
@@ -159,6 +250,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   injectNavigationStyles();
+  injectColumnStyles();
+  ensureMobileNavigation();
   reorderTopHero();
   moveColumnNavToEnd();
   setupServiceNavigation();
@@ -172,17 +265,21 @@ document.addEventListener('DOMContentLoaded', () => {
     const scrollY = window.scrollY;
 
     // Header background
-    if (scrollY > 50) {
-      header.classList.add('scrolled');
-    } else {
-      header.classList.remove('scrolled');
+    if (header) {
+      if (scrollY > 50) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
     }
 
     // Back to top button
-    if (scrollY > 600) {
-      backToTop.classList.add('visible');
-    } else {
-      backToTop.classList.remove('visible');
+    if (backToTop) {
+      if (scrollY > 600) {
+        backToTop.classList.add('visible');
+      } else {
+        backToTop.classList.remove('visible');
+      }
     }
 
     // Fixed CTA (mobile)
@@ -204,6 +301,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // MOBILE MENU
   // ===================================================
   function toggleMobileMenu() {
+    if (!burger || !mobileMenu) return;
+
     const isOpen = mobileMenu.classList.toggle('active');
     burger.classList.toggle('active');
     burger.setAttribute('aria-expanded', isOpen);
@@ -212,6 +311,8 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function closeMobileMenu() {
+    if (!burger || !mobileMenu) return;
+
     mobileMenu.classList.remove('active');
     burger.classList.remove('active');
     burger.setAttribute('aria-expanded', 'false');
@@ -219,9 +320,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.classList.remove('menu-open');
   }
 
-  burger.addEventListener('click', toggleMobileMenu);
+  burger?.addEventListener('click', toggleMobileMenu);
 
-  mobileMenu.querySelectorAll('.mobile-menu__accordion-toggle').forEach(button => {
+  mobileMenu?.querySelectorAll('.mobile-menu__accordion-toggle').forEach(button => {
     button.addEventListener('click', () => {
       const isOpen = button.getAttribute('aria-expanded') === 'true';
       const panel = document.getElementById(button.getAttribute('aria-controls'));
@@ -236,13 +337,13 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Close mobile menu on link click
-  mobileMenu.querySelectorAll('a').forEach(link => {
+  mobileMenu?.querySelectorAll('a').forEach(link => {
     link.addEventListener('click', closeMobileMenu);
   });
 
   // Close mobile menu on escape key
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape' && mobileMenu.classList.contains('active')) {
+    if (e.key === 'Escape' && mobileMenu?.classList.contains('active')) {
       closeMobileMenu();
     }
   });
@@ -260,7 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       e.preventDefault();
 
-      const headerHeight = header.offsetHeight;
+      const headerHeight = header?.offsetHeight || 0;
       const targetPosition = target.getBoundingClientRect().top + window.scrollY - headerHeight;
 
       window.scrollTo({
@@ -273,7 +374,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===================================================
   // BACK TO TOP
   // ===================================================
-  backToTop.addEventListener('click', () => {
+  backToTop?.addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
 
