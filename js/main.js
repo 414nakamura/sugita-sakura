@@ -33,10 +33,10 @@ document.addEventListener('DOMContentLoaded', () => {
     ['骨盤矯正', '/pelvic-correction/'],
     ['スポーツ障害', '/sports-injury/'],
     ['リハビリ・後療法', '/rehabilitation/'],
-    ['手技療法', '/services/#manual-therapy'],
-    ['電気治療器', '/services/#electrotherapy'],
-    ['腰椎牽引療法', '/services/#lumbar-traction'],
-    ['アクアタイザー', '/services/#aquatizer']
+    ['手技療法', '/manual-therapy/'],
+    ['電気治療器', '/electrotherapy/'],
+    ['腰椎牽引療法', '/lumbar-traction/'],
+    ['アクアタイザー', '/aquatizer/']
   ];
 
   function buildDropdownColumn(title, links) {
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
       .note-column-hero > p:last-child:not([style]) { max-width:720px !important; font-size:.98rem !important; line-height:1.8 !important; }
       .note-column-list { max-width:1080px; margin:0 auto; display:grid !important; grid-template-columns:1fr !important; gap:1rem !important; }
       .note-column-card { display:grid !important; grid-template-columns:260px minmax(0,1fr) !important; border-radius:8px !important; box-shadow:0 4px 18px rgba(30,15,20,.06) !important; }
-      .note-column-card img { height:100% !important; min-height:176px !important; aspect-ratio:auto !important; object-fit:cover !important; }
+      .note-column-card img { height:100% !important; min-height:176px !important; aspect-ratio:auto !important; object-fit:contain !important; background:#fff4f7 !important; }
       .note-column-card__body { padding:1.15rem 1.25rem !important; gap:.45rem !important; min-width:0; }
       .note-column-card time,
       .note-summary__date { color:#9b7c86 !important; font-size:.82rem !important; font-weight:700 !important; }
@@ -127,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
       .note-column-card p { font-size:.88rem !important; line-height:1.75 !important; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
       .note-column-card a { display:inline-flex; align-items:center; align-self:flex-start; margin-top:.25rem !important; padding:.55rem .9rem; border-radius:999px; background:#fce4ec; color:#c4385e !important; font-size:.86rem; text-decoration:none; }
       .note-summary { max-width:860px !important; background:#fff; border:1px solid #f0e0e3; border-radius:8px; padding:clamp(1rem, 3vw, 2rem) !important; box-shadow:0 4px 20px rgba(30,15,20,.05); }
-      .note-summary__image { border-radius:8px !important; margin-bottom:1rem !important; }
+      .note-summary__image { width:100% !important; height:auto !important; max-height:none !important; object-fit:contain !important; border-radius:8px !important; margin-bottom:1rem !important; background:#fff4f7 !important; }
       .note-summary h1 { font-size:clamp(1.45rem, 3vw, 2rem) !important; line-height:1.55 !important; margin:.6rem 0 1rem !important; overflow-wrap:anywhere; }
       .note-summary__box { padding:1.1rem 1.25rem !important; margin:1.25rem 0 !important; border-radius:0 8px 8px 0 !important; }
       .note-summary p { font-size:.98rem; line-height:1.9; }
@@ -141,7 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
         body:has(.note-column-hero) .section { padding:28px 0 !important; }
         .note-column-list { gap:.85rem !important; }
         .note-column-card { grid-template-columns:112px minmax(0,1fr) !important; min-height:136px; }
-        .note-column-card img { min-height:136px !important; height:100% !important; }
+        .note-column-card img { min-height:136px !important; height:100% !important; object-fit:contain !important; }
         .note-column-card__body { padding:.85rem !important; gap:.35rem !important; }
         .note-column-card h2 { font-size:.92rem !important; line-height:1.5 !important; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
         .note-column-card p { display:none !important; }
@@ -215,7 +215,19 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function setupServiceNavigation() {
-    const dropdown = document.querySelector('.header__dropdown');
+    const servicesNavLink = document.querySelector('.header__nav-list > li > a[href="/services/"]');
+    const servicesNavItem = servicesNavLink?.closest('li');
+
+    if (servicesNavItem) {
+      const isActive = servicesNavLink.classList.contains('active');
+      servicesNavItem.className = 'header__nav-item--dropdown';
+      servicesNavItem.innerHTML = [
+        `<a href="/services/" class="header__nav-link${isActive ? ' active' : ''}">施術メニュー <i class="fas fa-chevron-down" style="font-size:.65em;opacity:.7;"></i></a>`,
+        '<ul class="header__dropdown header__dropdown--mega"></ul>'
+      ].join('');
+    }
+
+    const dropdown = servicesNavItem?.querySelector('.header__dropdown') || document.querySelector('.header__dropdown');
 
     if (dropdown) {
       dropdown.classList.add('header__dropdown--mega');

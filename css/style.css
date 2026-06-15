@@ -1380,6 +1380,13 @@ ul, ol {
   opacity: 0.94;
 }
 
+.method-page__hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 22px;
+}
+
 .method-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 320px;
@@ -1408,6 +1415,11 @@ ul, ol {
 .method-section p,
 .method-section li {
   color: var(--color-text-light);
+}
+
+.method-section__lead {
+  font-size: 17px;
+  line-height: 1.95;
 }
 
 .method-list {
@@ -1459,6 +1471,106 @@ ul, ol {
 
 .method-sidebar a:hover {
   color: var(--color-primary);
+}
+
+.method-sidebar a[aria-current="page"] {
+  color: var(--color-primary-dark);
+  font-weight: 700;
+}
+
+.method-check-grid,
+.method-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.method-check,
+.method-info-card,
+.method-flow {
+  padding: 18px;
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-sm);
+  background: var(--color-white);
+}
+
+.method-check strong,
+.method-info-card h3,
+.method-flow h3 {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--color-text);
+  font-size: 16px;
+}
+
+.method-flow-list {
+  counter-reset: method-flow;
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.method-flow {
+  position: relative;
+  padding-left: 58px;
+}
+
+.method-flow::before {
+  counter-increment: method-flow;
+  content: counter(method-flow);
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--color-primary-lighter);
+  color: var(--color-primary-dark);
+  font-weight: 700;
+}
+
+.method-faq {
+  display: grid;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.method-faq details {
+  padding: 16px 18px;
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-sm);
+  background: var(--color-white);
+}
+
+.method-faq summary {
+  cursor: pointer;
+  color: var(--color-text);
+  font-weight: 700;
+}
+
+.method-faq p {
+  margin-top: 10px;
+}
+
+.method-related {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.method-related a {
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-lighter);
+  color: var(--color-primary-dark);
+  font-size: 14px;
+  font-weight: 700;
 }
 
 /* ===================================================
@@ -2465,6 +2577,11 @@ ul, ol {
   .method-layout { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
   .method-sidebar { position: static !important; }
   .method-page__hero { min-height: 260px !important; }
+  .method-page__hero-actions { flex-direction: column !important; align-items: flex-start !important; }
+  .method-check-grid,
+  .method-card-grid { grid-template-columns: 1fr !important; }
+  .method-flow { padding: 3.4rem 1rem 1rem !important; }
+  .method-flow::before { top: 1rem !important; left: 1rem !important; }
 
   /* features */
   .features__grid { grid-template-columns: repeat(2,1fr) !important; }
