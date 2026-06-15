@@ -50,6 +50,38 @@ document.addEventListener('DOMContentLoaded', () => {
     ].join('');
   }
 
+  function buildMobileAccordion() {
+    const item = document.createElement('li');
+    const panelId = 'mobileServiceMenuPanel';
+
+    item.className = 'mobile-menu__accordion';
+    item.innerHTML = [
+      `<button type="button" class="mobile-menu__link mobile-menu__accordion-toggle" aria-expanded="false" aria-controls="${panelId}">`,
+      '<span><i class="fas fa-notes-medical"></i>施術メニュー</span>',
+      '<i class="fas fa-chevron-down mobile-menu__accordion-icon" aria-hidden="true"></i>',
+      '</button>',
+      `<div class="mobile-menu__submenu" id="${panelId}" hidden>`,
+      '<a href="/services/" class="mobile-menu__sublink mobile-menu__sublink--overview"><i class="fas fa-list"></i>施術メニュー一覧</a>',
+      '<p class="mobile-menu__section">症状から探す</p>',
+      symptomLinks.map(([label, href]) => `<a href="${href}" class="mobile-menu__sublink"><i class="fas fa-chevron-right"></i>${label}</a>`).join(''),
+      '<p class="mobile-menu__section">治療方法から探す</p>',
+      methodLinks.map(([label, href]) => `<a href="${href}" class="mobile-menu__sublink"><i class="fas fa-chevron-right"></i>${label}</a>`).join(''),
+      '</div>'
+    ].join('');
+
+    return item;
+  }
+
+  function moveColumnNavToEnd() {
+    document.querySelectorAll('.header__nav-list').forEach((navList) => {
+      const columnItem = navList.querySelector('a[href="/column/"]')?.closest('li');
+
+      if (columnItem) {
+        navList.appendChild(columnItem);
+      }
+    });
+  }
+
   function setupServiceNavigation() {
     const dropdown = document.querySelector('.header__dropdown');
 
@@ -62,42 +94,30 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const mobileList = document.querySelector('.mobile-menu__list');
-    const servicesLinkItem = mobileList?.querySelector('a[href="/services/"]')?.closest('li');
-    const accidentLinkItem = mobileList?.querySelector('a[href="/accident/"]')?.closest('li');
+    const servicesLinkItem = mobileList?.querySelector('a[href="/services/"], .mobile-menu__accordion-toggle')?.closest('li');
 
-    if (mobileList && servicesLinkItem && accidentLinkItem && !mobileList.querySelector('.mobile-menu__section')) {
+    if (mobileList && servicesLinkItem) {
       let node = servicesLinkItem.nextElementSibling;
 
-      while (node && node !== accidentLinkItem) {
+      while (node) {
+        const link = node.querySelector?.('a.mobile-menu__link');
+        const isGeneratedSection = node.classList?.contains('mobile-menu__section');
+        const isGeneratedLink = link?.hasAttribute('style') || link?.querySelector('.fa-chevron-right');
+
+        if (!isGeneratedSection && !isGeneratedLink) {
+          break;
+        }
+
         const next = node.nextElementSibling;
         node.remove();
         node = next;
       }
 
-      const fragment = document.createDocumentFragment();
-
-      [
-        ['症状から探す', symptomLinks],
-        ['治療方法から探す', methodLinks]
-      ].forEach(([title, links]) => {
-        const sectionItem = document.createElement('li');
-
-        sectionItem.className = 'mobile-menu__section';
-        sectionItem.textContent = title;
-        fragment.appendChild(sectionItem);
-
-        links.forEach(([label, href]) => {
-          const item = document.createElement('li');
-
-          item.innerHTML = `<a href="${href}" class="mobile-menu__link" style="font-size:.88rem;padding-left:2rem;"><i class="fas fa-chevron-right" style="font-size:.7em;"></i>${label}</a>`;
-          fragment.appendChild(item);
-        });
-      });
-
-      mobileList.insertBefore(fragment, accidentLinkItem);
+      servicesLinkItem.replaceWith(buildMobileAccordion());
     }
   }
 
+  moveColumnNavToEnd();
   setupServiceNavigation();
 
   // ===================================================
@@ -157,6 +177,20 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   burger.addEventListener('click', toggleMobileMenu);
+
+  mobileMenu.querySelectorAll('.mobile-menu__accordion-toggle').forEach(button => {
+    button.addEventListener('click', () => {
+      const isOpen = button.getAttribute('aria-expanded') === 'true';
+      const panel = document.getElementById(button.getAttribute('aria-controls'));
+
+      button.setAttribute('aria-expanded', String(!isOpen));
+      button.closest('.mobile-menu__accordion')?.classList.toggle('is-open', !isOpen);
+
+      if (panel) {
+        panel.hidden = isOpen;
+      }
+    });
+  });
 
   // Close mobile menu on link click
   mobileMenu.querySelectorAll('a').forEach(link => {
