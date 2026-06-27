@@ -11,7 +11,7 @@
   <meta name="theme-color" content="#e85b81">
   <link rel="apple-touch-icon" href="/images/logo.png">
   <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
-  <link rel="preload" as="image" href="/images/hero-bg.jpg">
+  <link rel="preload" as="image" href="/images/top-main-768.webp" imagesrcset="/images/top-main-768.webp 768w, /images/top-main.webp 1535w" imagesizes="100vw" type="image/webp" fetchpriority="high">
   <link rel="canonical" href="https://sugita-sakuraclinic.com/">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="ja_JP">
@@ -262,7 +262,7 @@
   <header class="header" id="header">
     <div class="header__inner">
       <a href="/" class="header__logo" aria-label="トップへ戻る">
-        <img src="images/logo.png" alt="杉田さくら柔整治療院ロゴ" class="header__logo-img">
+        <img src="images/logo.png" alt="杉田さくら柔整治療院ロゴ" class="header__logo-img" width="150" height="150">
         <span class="header__logo-text"><span class="header__logo-main">杉田さくら柔整治療院</span></span>
       </a>
       <nav class="header__nav" id="nav" aria-label="メインナビゲーション">
@@ -297,7 +297,11 @@
     <section id="hero" style="width:100%;background:#fff;overflow:hidden;padding-top:var(--header-height);">
       <!-- メイン画像：中央寄せ全幅表示 -->
       <div style="width:100%;max-width:1400px;margin:0 auto;line-height:0;text-align:center;">
-        <img src="images/top-main.png" alt="杉田さくら柔整治療院 外観" style="width:100%;height:auto;display:block;">
+        <picture style="display:block;width:100%;aspect-ratio:1535/1024;">
+          <source srcset="/images/top-main-768.webp" media="(max-width: 767px)" type="image/webp">
+          <source srcset="/images/top-main.webp" type="image/webp">
+          <img src="images/top-main.png" alt="杉田さくら柔整治療院 外観" width="1535" height="1024" fetchpriority="high" decoding="async" style="width:100%;height:auto;display:block;">
+        </picture>
       </div>
       <!-- ファーストビューCTA -->
       <div style="background:#fff;padding:1.5rem 1.5rem 1rem;text-align:center;max-width:800px;margin:0 auto;">
@@ -337,7 +341,7 @@
         <div class="section__header" data-animate=""><span class="section__label">About Us</span><h2 class="section__title">当院について</h2><div class="section__divider"></div></div>
         <div data-animate="" style="display:grid;grid-template-columns:1fr 1.5fr;gap:3rem;align-items:start;margin-bottom:2rem;" class="director-grid">
           <div>
-            <img src="images/director.jpg" alt="院長 谷内直人" style="width:100%;border-radius:1rem;box-shadow:0 4px 24px rgba(0,0,0,.12);">
+            <img src="images/director.jpg" alt="院長 谷内直人" width="1448" height="1086" loading="lazy" decoding="async" style="width:100%;height:auto;border-radius:1rem;box-shadow:0 4px 24px rgba(0,0,0,.12);">
             <div style="text-align:center;margin-top:1rem;padding:1rem;background:#fdf0f4;border-radius:.75rem;">
               <p style="font-size:.8rem;color:#e85b81;font-weight:600;letter-spacing:.1em;margin-bottom:.25rem;">院長紹介</p>
               <p style="font-size:1.3rem;font-weight:700;margin-bottom:.25rem;">谷内 直人<small style="font-size:.7em;font-weight:400;">（たにうち なおと）</small></p>
@@ -482,7 +486,7 @@
     <div class="container">
       <div class="footer__top">
         <div class="footer__brand">
-          <div class="footer__logo"><img src="images/logo.png" alt="杉田さくら柔整治療院ロゴ" class="footer__logo-img"><span class="footer__logo-text"><span class="footer__logo-main">杉田さくら柔整治療院</span></span></div>
+          <div class="footer__logo"><img src="images/logo.png" alt="杉田さくら柔整治療院ロゴ" class="footer__logo-img" width="150" height="150" loading="lazy" decoding="async"><span class="footer__logo-text"><span class="footer__logo-main">杉田さくら柔整治療院</span></span></div>
           <p class="footer__address">〒235-0033 神奈川県横浜市磯子区杉田1-14-15 エマネート和光1F<br>TEL: <a href="tel:045-353-8852">045-353-8852</a></p>
         </div>
         <div class="footer__nav"><div class="footer__nav-col"><h3 class="footer__nav-title">メニュー</h3><ul><li><a href="/about/">当院について</a></li><li><a href="/services/">施術メニュー</a></li><li><a href="/accident/">交通事故治療</a></li><li><a href="/column/">院長のコラム</a></li></ul></div><div class="footer__nav-col"><h3 class="footer__nav-title">症状から探す</h3><ul><li><a href="/lumbar-pain/">腰痛・ぎっくり腰</a></li><li><a href="/shoulder-pain/">肩こり・四十肩</a></li><li><a href="/knee-pain/">膝の痛み</a></li><li><a href="/tendinitis/">腱鞘炎・手首の痛み</a></li><li><a href="/ankle-pain/">足首の痛み・捻挫</a></li><li><a href="/finger-injury/">突き指・指の痛み</a></li><li><a href="/neck-pain/">首痛・寝違え</a></li></ul></div><div class="footer__nav-col"><h3 class="footer__nav-title">治療方法から探す</h3><ul><li><a href="/trauma-care/">外傷のケア</a></li><li><a href="/accident/">交通事故治療</a></li><li><a href="/acupuncture/">鍼灸施術</a></li><li><a href="/pelvic-correction/">骨盤矯正</a></li><li><a href="/sports-injury/">スポーツ障害</a></li><li><a href="/rehabilitation/">リハビリ・後療法</a></li><li><a href="/manual-therapy/">手技療法</a></li><li><a href="/electrotherapy/">電気治療器</a></li><li><a href="/lumbar-traction/">腰椎牽引療法</a></li><li><a href="/aquatizer/">アクアタイザー</a></li></ul></div><div class="footer__nav-col"><h3 class="footer__nav-title">ご案内</h3><ul><li><a href="/hours/">診療時間</a></li><li><a href="/access/">アクセス</a></li><li><a href="/faq/">よくある質問</a></li></ul></div></div>
