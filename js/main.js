@@ -660,6 +660,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  document.querySelectorAll('.fixed-cta__item').forEach(function(el) {
+    el.addEventListener('click', function() {
+      if (typeof gtag === 'function') {
+        gtag('event', 'fixed_cta_click', {
+          'link_text': this.textContent.trim(),
+          'link_url': this.href
+        });
+      }
+    });
+  });
+
   // ===================================================
   // FOOTER FINDER LINKS
   // ===================================================
