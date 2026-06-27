@@ -215,6 +215,13 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function setupServiceNavigation() {
+    const navList = document.querySelector('.header__nav-list');
+    const columnLinkItem = navList?.querySelector('a[href="/column/"]')?.closest('li');
+
+    if (navList && columnLinkItem) {
+      navList.appendChild(columnLinkItem);
+    }
+
     const servicesNavLink = document.querySelector('.header__nav-list > li > a[href="/services/"]');
     const servicesNavItem = servicesNavLink?.closest('li');
 
@@ -658,17 +665,24 @@ document.addEventListener('DOMContentLoaded', () => {
   // ===================================================
   const footerNav = document.querySelector('.footer__nav');
 
-  if (footerNav) {
-    const guideColumn = Array.from(footerNav.querySelectorAll('.footer__nav-col')).find((column) => {
-      return column.querySelector('.footer__nav-title')?.textContent.trim() === 'ご案内';
-    });
-    const symptomTitle = Array.from(footerNav.querySelectorAll('.footer__nav-title')).find((title) => {
-      return title.textContent.trim() === '症状・治療';
-    });
+    if (footerNav) {
+      const guideColumn = Array.from(footerNav.querySelectorAll('.footer__nav-col')).find((column) => {
+        return column.querySelector('.footer__nav-title')?.textContent.trim() === 'ご案内';
+      });
+      const guideList = guideColumn?.querySelector('ul');
+      const symptomTitle = Array.from(footerNav.querySelectorAll('.footer__nav-title')).find((title) => {
+        return title.textContent.trim() === '症状・治療';
+      });
 
-    if (symptomTitle) {
-      symptomTitle.textContent = '症状から探す';
-    }
+      if (guideList && !guideList.querySelector('a[href="/clinic-guide/"]')) {
+        const item = document.createElement('li');
+        item.innerHTML = '<a href="/clinic-guide/">整形外科・整骨院・整体・鍼灸院の違い</a>';
+        guideList.appendChild(item);
+      }
+
+      if (symptomTitle) {
+        symptomTitle.textContent = '症状から探す';
+      }
 
     if (!footerNav.querySelector('a[href="/neck-pain/"]')) {
       const symptomColumn = document.createElement('div');

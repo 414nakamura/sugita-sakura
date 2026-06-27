@@ -5,7 +5,8 @@ Fetch note RSS and generate HP column pages.
 Policy:
 - note is the primary article body.
 - The HP gets an indexable column listing page.
-- Each HP article page is a noindex summary page that links to note.
+- Each HP article page gets an original summary, related links, and structured data,
+  then links to note for the full body.
 """
 
 from __future__ import annotations
@@ -122,10 +123,24 @@ def parse_posts(xml_bytes: bytes) -> list[NotePost]:
     return posts
 
 
-def page_shell(title: str, description: str, body: str, canonical: str, robots: str = "index, follow") -> str:
+def page_shell(
+    title: str,
+    description: str,
+    body: str,
+    canonical: str,
+    robots: str = "index, follow",
+    json_ld: dict | None = None,
+) -> str:
     escaped_title = html.escape(title)
     escaped_description = html.escape(description)
     escaped_canonical = html.escape(canonical)
+    structured_data = ""
+    if json_ld:
+        structured_data = (
+            '  <script type="application/ld+json">'
+            + json.dumps(json_ld, ensure_ascii=False, indent=2)
+            + "</script>\n"
+        )
     return f"""<!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -141,6 +156,11 @@ def page_shell(title: str, description: str, body: str, canonical: str, robots: 
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="/css/style.css">
+{structured_data}  <meta property="og:type" content="article">
+  <meta property="og:site_name" content="{SITE_NAME}">
+  <meta property="og:title" content="{escaped_title}">
+  <meta property="og:description" content="{escaped_description}">
+  <meta property="og:url" content="{escaped_canonical}">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-PHF5R7GY8F"></script>
   <script>window.dataLayer=window.dataLayer||[];function gtag(){{dataLayer.push(arguments);}}gtag('js',new Date());gtag('config','G-PHF5R7GY8F');</script>
   <script type="text/javascript">
@@ -156,19 +176,24 @@ def page_shell(title: str, description: str, body: str, canonical: str, robots: 
     .note-column-hero p {{ margin: 0 auto; max-width: 760px; color: #7a6b70; }}
     .note-column-list {{ display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.4rem; }}
     .note-column-card {{ background: #fff; border: 1px solid #f0e0e3; border-radius: .75rem; overflow: hidden; box-shadow: 0 8px 24px rgba(30, 15, 20, .07); display: flex; flex-direction: column; }}
-    .note-column-card img {{ width: 100%; aspect-ratio: 16 / 9; object-fit: cover; background: #f7eef1; }}
+    .note-column-card img {{ width: 100%; aspect-ratio: 16 / 9; object-fit: contain; background: #fff4f7; }}
     .note-column-card__body {{ padding: 1.2rem; display: flex; flex-direction: column; gap: .7rem; flex: 1; }}
     .note-column-card time {{ color: #9b7c86; font-size: .85rem; }}
     .note-column-card h2 {{ font-size: 1.05rem; line-height: 1.55; margin: 0; color: #3a2d32; }}
     .note-column-card p {{ margin: 0; color: #6f6267; font-size: .92rem; line-height: 1.8; }}
     .note-column-card a {{ margin-top: auto; color: #e85b81; font-weight: 700; }}
     .note-summary {{ max-width: 820px; margin: 0 auto; }}
-    .note-summary__image {{ width: 100%; border-radius: .75rem; margin-bottom: 1.5rem; }}
+    .note-summary__image {{ width: 100%; height: auto; object-fit: contain; border-radius: .75rem; margin-bottom: 1.5rem; background: #fff4f7; }}
     .note-summary__date {{ color: #9b7c86; }}
     .note-summary h1 {{ font-size: clamp(1.65rem, 4vw, 2.4rem); line-height: 1.45; color: #3a2d32; }}
     .note-summary__box {{ background: #fff8fb; border-left: 4px solid #e85b81; border-radius: 0 .5rem .5rem 0; padding: 1.4rem; margin: 1.5rem 0; }}
+    .note-summary__links {{ display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .8rem; margin: 1.5rem 0; }}
+    .note-summary__links a {{ display: block; padding: .85rem 1rem; border: 1px solid #f0dfe5; border-radius: .5rem; color: #3a2d32; font-weight: 700; background: #fff; }}
+    .note-summary__links a:hover {{ color: #e85b81; border-color: #e85b81; }}
+    .note-summary h2 {{ margin: 1.8rem 0 .8rem; color: #3a2d32; font-size: 1.35rem; }}
+    .note-summary ul {{ padding-left: 1.2rem; color: #6f6267; line-height: 1.9; }}
     @media (max-width: 900px) {{ .note-column-list {{ grid-template-columns: repeat(2, minmax(0, 1fr)); }} }}
-    @media (max-width: 640px) {{ .note-column-list {{ grid-template-columns: 1fr; }} }}
+    @media (max-width: 640px) {{ .note-column-list, .note-summary__links {{ grid-template-columns: 1fr; }} }}
   </style>
 </head>
 <body>
@@ -193,7 +218,91 @@ def site_footer() -> str:
   <script src="/js/main.js"></script>"""
 
 
+RELATED_LINKS = [
+    ("腰痛", "腰痛・ぎっくり腰", "/lumbar-pain/"),
+    ("ぎっくり腰", "腰痛・ぎっくり腰", "/lumbar-pain/"),
+    ("むちうち", "首痛・寝違え", "/neck-pain/"),
+    ("首", "首痛・寝違え", "/neck-pain/"),
+    ("肩", "肩こり・四十肩", "/shoulder-pain/"),
+    ("膝", "膝の痛み", "/knee-pain/"),
+    ("事故", "交通事故治療", "/accident/"),
+    ("交通事故", "交通事故治療", "/accident/"),
+    ("接骨院", "整形外科・整骨院・整体・鍼灸院の違い", "/clinic-guide/"),
+    ("整形外科", "整形外科・整骨院・整体・鍼灸院の違い", "/clinic-guide/"),
+    ("整体", "整形外科・整骨院・整体・鍼灸院の違い", "/clinic-guide/"),
+]
+
+
+def related_links(post: NotePost) -> list[tuple[str, str]]:
+    haystack = f"{post.title} {post.excerpt}"
+    links: list[tuple[str, str]] = []
+    seen: set[str] = set()
+    for keyword, label, href in RELATED_LINKS:
+        if keyword in haystack and href not in seen:
+            links.append((label, href))
+            seen.add(href)
+    if not links:
+        links.append(("症状から探す", "/services/#symptom-search"))
+        links.append(("施術メニュー", "/services/"))
+    return links[:4]
+
+
+def summary_points(post: NotePost) -> list[str]:
+    title = post.title
+    points = ["記事テーマの要点と、来院前に確認したい判断材料"]
+    if "ぎっくり腰" in title:
+        points = ["ぎっくり腰直後に避けたい動き", "冷却・安静・受診相談の目安", "腰痛を繰り返さないための注意点"]
+    elif "腰痛" in title:
+        points = ["腰痛の原因を見分ける考え方", "放置せず相談したい症状", "整骨院で行う状態確認と施術の方向性"]
+    elif "むちうち" in title or "交通事故" in title:
+        points = ["事故後に症状が遅れて出る理由", "整形外科と整骨院の役割分担", "自賠責保険で通院する際の確認点"]
+    elif "首" in title:
+        points = ["首の痛みで注意したい症状", "むちうち以外に考えられる不調", "早めに相談するべきタイミング"]
+    return points
+
+
+def column_json_ld(post: NotePost) -> dict:
+    return {
+        "@context": "https://schema.org",
+        "@graph": [
+            {
+                "@type": "Article",
+                "headline": post.title,
+                "description": post.excerpt,
+                "datePublished": post.published_iso,
+                "dateModified": post.published_iso,
+                "image": post.thumbnail or f"{SITE_URL}/images/logo.png",
+                "url": f"{SITE_URL}/column/{post.slug}/",
+                "mainEntityOfPage": f"{SITE_URL}/column/{post.slug}/",
+                "author": {
+                    "@type": "Person",
+                    "name": "谷内 直人",
+                    "jobTitle": "院長・柔道整復師"
+                },
+                "publisher": {
+                    "@type": "Organization",
+                    "name": SITE_NAME,
+                    "logo": {
+                        "@type": "ImageObject",
+                        "url": f"{SITE_URL}/images/logo.png"
+                    }
+                },
+                "isBasedOn": post.url
+            },
+            {
+                "@type": "BreadcrumbList",
+                "itemListElement": [
+                    {"@type": "ListItem", "position": 1, "name": "トップ", "item": SITE_URL + "/"},
+                    {"@type": "ListItem", "position": 2, "name": COLUMN_TITLE, "item": SITE_URL + "/column/"},
+                    {"@type": "ListItem", "position": 3, "name": post.title, "item": f"{SITE_URL}/column/{post.slug}/"}
+                ]
+            }
+        ]
+    }
+
+
 def render_index(posts: Iterable[NotePost]) -> str:
+    posts = list(posts)
     cards = []
     for post in posts:
         image = (
@@ -233,6 +342,23 @@ def render_index(posts: Iterable[NotePost]) -> str:
         "杉田さくら柔整治療院の院長がnoteで発信している健康コラムの新着一覧です。",
         body,
         f"{SITE_URL}/column/",
+        json_ld={
+            "@context": "https://schema.org",
+            "@type": "Blog",
+            "name": COLUMN_TITLE,
+            "url": f"{SITE_URL}/column/",
+            "publisher": {"@type": "Organization", "name": SITE_NAME},
+            "blogPost": [
+                {
+                    "@type": "BlogPosting",
+                    "headline": post.title,
+                    "url": f"{SITE_URL}/column/{post.slug}/",
+                    "datePublished": post.published_iso,
+                    "isBasedOn": post.url,
+                }
+                for post in posts
+            ],
+        },
     )
 
 
@@ -241,6 +367,10 @@ def render_summary(post: NotePost) -> str:
         f'<img class="note-summary__image" src="{html.escape(post.thumbnail)}" alt="{html.escape(post.title)}" loading="lazy">'
         if post.thumbnail
         else ""
+    )
+    points = "\n".join(f"          <li>{html.escape(point)}</li>" for point in summary_points(post))
+    links = "\n".join(
+        f'          <a href="{html.escape(href)}">{html.escape(label)}</a>' for label, href in related_links(post)
     )
     body = f"""{site_header()}
   <main>
@@ -256,7 +386,15 @@ def render_summary(post: NotePost) -> str:
         <div class="note-summary__box">
           <p>{html.escape(post.excerpt)}</p>
         </div>
-        <p>この記事の本文はnoteで公開しています。詳しい内容は以下のリンクからお読みください。</p>
+        <h2>この記事でわかること</h2>
+        <ul>
+{points}
+        </ul>
+        <h2>関連する症状・治療ページ</h2>
+        <div class="note-summary__links">
+{links}
+        </div>
+        <p>この記事の本文はnoteで公開しています。HPでは要点と関連ページを整理し、詳しい本文はnoteで継続的に更新しています。</p>
         <p><a class="btn btn--primary" href="{html.escape(post.url)}" target="_blank" rel="noopener noreferrer">noteで全文を読む</a></p>
       </div>
     </section>
@@ -266,8 +404,8 @@ def render_summary(post: NotePost) -> str:
         f"{post.title}｜{SITE_NAME}",
         post.excerpt,
         body,
-        post.url,
-        robots="noindex, follow",
+        f"{SITE_URL}/column/{post.slug}/",
+        json_ld=column_json_ld(post),
     )
 
 
@@ -287,6 +425,14 @@ def write_outputs(root: Path, posts: list[NotePost]) -> None:
         post_dir = column_dir / post.slug
         post_dir.mkdir(exist_ok=True)
         (post_dir / "index.html").write_text(render_summary(post), encoding="utf-8")
+
+
+def load_cached_posts(root: Path) -> list[NotePost]:
+    cache_path = root / "data" / "note-posts.json"
+    if not cache_path.exists():
+        return []
+    raw_posts = json.loads(cache_path.read_text(encoding="utf-8"))
+    return [NotePost(**post) for post in raw_posts]
 
 
 def update_sitemap(root: Path) -> None:
@@ -310,7 +456,11 @@ def update_sitemap(root: Path) -> None:
 
 def main() -> int:
     root = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else Path.cwd()
-    posts = parse_posts(fetch_rss(NOTE_RSS_URL))
+    try:
+        posts = parse_posts(fetch_rss(NOTE_RSS_URL))
+    except Exception as exc:
+        print(f"RSS fetch failed, using cached posts: {exc}", file=sys.stderr)
+        posts = load_cached_posts(root)
     if not posts:
         print("No note posts found.", file=sys.stderr)
         return 1
