@@ -21,6 +21,8 @@ from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Iterable
+
+from generate_sitemap import generate_sitemap
 from xml.etree import ElementTree as ET
 
 
@@ -266,14 +268,18 @@ def column_json_ld(post: NotePost) -> dict:
         "@context": "https://schema.org",
         "@graph": [
             {
-                "@type": "Article",
+                "@type": "BlogPosting",
                 "headline": post.title,
                 "description": post.excerpt,
                 "datePublished": post.published_iso,
                 "dateModified": post.published_iso,
                 "image": post.thumbnail or f"{SITE_URL}/images/logo.png",
                 "url": f"{SITE_URL}/column/{post.slug}/",
-                "mainEntityOfPage": f"{SITE_URL}/column/{post.slug}/",
+                "mainEntityOfPage": {
+                    "@type": "WebPage",
+                    "@id": f"{SITE_URL}/column/{post.slug}/"
+                },
+                "inLanguage": "ja",
                 "author": {
                     "@type": "Person",
                     "name": "谷内 直人",
@@ -436,22 +442,7 @@ def load_cached_posts(root: Path) -> list[NotePost]:
 
 
 def update_sitemap(root: Path) -> None:
-    sitemap = root / "sitemap.xml"
-    if not sitemap.exists():
-        return
-    content = sitemap.read_text(encoding="utf-8")
-    if f"{SITE_URL}/column/" in content:
-        return
-    today = datetime.now().date().isoformat()
-    entry = f"""  <url>
-    <loc>{SITE_URL}/column/</loc>
-    <lastmod>{today}</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.6</priority>
-  </url>
-"""
-    content = content.replace("</urlset>", entry + "</urlset>")
-    sitemap.write_text(content, encoding="utf-8")
+    generate_sitemap(root)
 
 
 def main() -> int:
