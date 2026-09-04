@@ -260,12 +260,13 @@
           var date = (cols[0] || '').replace(/"/g,'').trim();
           var text = (cols[1] || '').replace(/"/g,'').trim();
           if (!text) return;
-          var d = document.createElement('p');
-          d.style.cssText = 'margin:.15rem 0;font-size:.88rem;color:#7a3050;line-height:1.5;';
-          d.innerHTML = '<i class="fas fa-bell" style="color:#e85b81;margin-right:.4em;font-size:.8em;"></i>'
-            + (date ? '<span style="color:#a05070;margin-right:.5em;font-size:.8em;">' + date + '</span>' : '')
+          var d = document.createElement('div');
+          d.style.cssText = 'margin:.1rem 0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;';
+          d.innerHTML = '<a href="/notices/" style="color:#7a3050;text-decoration:none;font-size:.88rem;display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">'
+            + '<i class="fas fa-bell" style="color:#e85b81;margin-right:.4em;font-size:.8em;"></i>'
+            + (date ? '<span style="color:#a05070;margin-right:.5em;">' + date + '</span>' : '')
             + '<span style="color:#c0397a;font-weight:700;margin-right:.3em;">【お知らせ】</span>'
-            + text;
+            + text + '</a>';
           list.appendChild(d);
         });
         if (list.children.length) bar.style.display = 'block';
