@@ -281,7 +281,7 @@
           d.style.cssText = 'margin:.1rem 0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;';
           d.innerHTML = '<a href="/notices/" style="color:#7a3050;text-decoration:none;font-size:.88rem;display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">'
             + '<i class="fas fa-bell" style="color:#e85b81;margin-right:.4em;font-size:.8em;"></i>'
-            + (date ? '<span style="color:#a05070;margin-right:.5em;">'+date+'</span>' : '')
+            + (date ? '<span style="color:#a05070;margin-right:.5em;">'+date+'</span><span style="color:#d9a0b5;margin-right:.5em;">┃</span>' : '')
             + stripMarkup(text) + '</a>';
           list.appendChild(d);
         });
