@@ -251,24 +251,38 @@
     </div>
     <script>
     var SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTyHX4EhyrJzZM5hSCLjeuMuCMgQdxOmswfPHmc-UngXgVk2faZME_r2iNxymfor_WXBwz30Tkl7rfh/pub?gid=0&single=true&output=csv';
+    // RFC 4180 対応CSVパーサー（セル内改行・ダブルクォート対応）
+    function parseCSV(t){
+      var rows=[],row=[],f='',q=false;
+      for(var i=0;i<t.length;i++){
+        var c=t[i];
+        if(q){if(c==='"'){if(t[i+1]==='"'){f+='"';i++;}else q=false;}else f+=c;}
+        else{if(c==='"')q=true;else if(c===','){row.push(f);f='';}
+          else if(c==='\n'){row.push(f);rows.push(row);row=[];f='';}
+          else if(c!=='\r')f+=c;}
+      }
+      if(f||row.length){row.push(f);rows.push(row);}
+      return rows;
+    }
+    // [red]...[ /red] タグをテキストに変換（TOPバー用：タグ除去して1行化）
+    function stripMarkup(s){return s.replace(/\[red\]([\s\S]*?)\[\/red\]/g,'$1').replace(/\n/g,' ');}
     fetch(SHEET_CSV)
       .then(r => r.text())
       .then(csv => {
-        var lines = csv.trim().split('\n').slice(1);
-        if (!lines.length) return;
+        var rows = parseCSV(csv).slice(1);
+        if (!rows.length) return;
         var bar = document.getElementById('notice-bar');
         var list = document.getElementById('notice-list');
-        lines.slice(0, 3).forEach(function(line) {
-          var cols = line.match(/(".*?"|[^,]+)(?=,|$)/g) || line.split(',');
-          var date = (cols[0] || '').replace(/"/g,'').trim();
-          var text = (cols[1] || '').replace(/"/g,'').trim();
+        rows.slice(0, 3).forEach(function(cols) {
+          var date = (cols[0]||'').trim();
+          var text = (cols[1]||'').trim();
           if (!text) return;
           var d = document.createElement('div');
           d.style.cssText = 'margin:.1rem 0;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;';
           d.innerHTML = '<a href="/notices/" style="color:#7a3050;text-decoration:none;font-size:.88rem;display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">'
             + '<i class="fas fa-bell" style="color:#e85b81;margin-right:.4em;font-size:.8em;"></i>'
-            + (date ? '<span style="color:#a05070;margin-right:.5em;">' + date + '</span>' : '')
-            + text + '</a>';
+            + (date ? '<span style="color:#a05070;margin-right:.5em;">'+date+'</span>' : '')
+            + stripMarkup(text) + '</a>';
           list.appendChild(d);
         });
         if (list.children.length) bar.style.display = 'block';

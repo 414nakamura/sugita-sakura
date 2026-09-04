@@ -86,25 +86,40 @@
   </footer>
   <script>
   var SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTyHX4EhyrJzZM5hSCLjeuMuCMgQdxOmswfPHmc-UngXgVk2faZME_r2iNxymfor_WXBwz30Tkl7rfh/pub?gid=0&single=true&output=csv';
+  function parseCSV(t){
+    var rows=[],row=[],f='',q=false;
+    for(var i=0;i<t.length;i++){
+      var c=t[i];
+      if(q){if(c==='"'){if(t[i+1]==='"'){f+='"';i++;}else q=false;}else f+=c;}
+      else{if(c==='"')q=true;else if(c===','){row.push(f);f='';}
+        else if(c==='\n'){row.push(f);rows.push(row);row=[];f='';}
+        else if(c!=='\r')f+=c;}
+    }
+    if(f||row.length){row.push(f);rows.push(row);}
+    return rows;
+  }
+  function renderMarkup(s){
+    return s.replace(/\[red\]([\s\S]*?)\[\/red\]/g,'<span style="color:#e85b81;font-weight:700;">$1</span>')
+            .replace(/\n/g,'<br>');
+  }
   fetch(SHEET_CSV)
     .then(r => r.text())
     .then(csv => {
-      var lines = csv.trim().split('\n').slice(1);
+      var rows = parseCSV(csv).slice(1);
       var container = document.getElementById('notices-list');
-      if (!lines.length || !lines[0].trim()) {
+      var valid = rows.filter(function(r){return (r[1]||'').trim();});
+      if (!valid.length) {
         container.innerHTML = '<p style="color:#7a6b70;text-align:center;padding:2rem 0;">現在お知らせはありません。</p>';
         return;
       }
       container.innerHTML = '';
-      lines.forEach(function(line) {
-        var cols = line.match(/(".*?"|[^,]+)(?=,|$)/g) || line.split(',');
-        var date = (cols[0] || '').replace(/"/g,'').trim();
-        var text = (cols[1] || '').replace(/"/g,'').trim();
-        if (!text) return;
+      valid.forEach(function(cols) {
+        var date = (cols[0]||'').trim();
+        var text = (cols[1]||'').trim();
         var item = document.createElement('div');
         item.style.cssText = 'border-bottom:1px solid #f0e0e3;padding:1.25rem 0;';
-        item.innerHTML = (date ? '<span style="font-size:.82rem;color:#a05070;display:block;margin-bottom:.3rem;">' + date + '</span>' : '')
-          + '<p style="margin:0;color:#3a2d32;font-size:.95rem;line-height:1.7;">' + text + '</p>';
+        item.innerHTML = (date ? '<span style="font-size:.82rem;color:#a05070;display:block;margin-bottom:.3rem;">'+date+'</span>' : '')
+          + '<p style="margin:0;color:#3a2d32;font-size:.95rem;line-height:1.8;">'+renderMarkup(text)+'</p>';
         container.appendChild(item);
       });
     })
