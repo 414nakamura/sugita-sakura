@@ -255,7 +255,7 @@
         if (!lines.length) return;
         var bar = document.getElementById('notice-bar');
         var list = document.getElementById('notice-list');
-        lines.slice(0, 2).forEach(function(line) {
+        lines.slice(0, 3).forEach(function(line) {
           var cols = line.match(/(".*?"|[^,]+)(?=,|$)/g) || line.split(',');
           var date = (cols[0] || '').replace(/"/g,'').trim();
           var text = (cols[1] || '').replace(/"/g,'').trim();
@@ -264,6 +264,7 @@
           d.style.cssText = 'margin:.15rem 0;font-size:.88rem;color:#7a3050;line-height:1.5;';
           d.innerHTML = '<i class="fas fa-bell" style="color:#e85b81;margin-right:.4em;font-size:.8em;"></i>'
             + (date ? '<span style="color:#a05070;margin-right:.5em;font-size:.8em;">' + date + '</span>' : '')
+            + '<span style="color:#c0397a;font-weight:700;margin-right:.3em;">【お知らせ】</span>'
             + text;
           list.appendChild(d);
         });
