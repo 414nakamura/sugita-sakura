@@ -241,27 +241,33 @@
       <a href="tel:045-353-8852" class="mobile-menu__tel" onclick="gtag('event','tel_click',{'event_category':'contact','event_label':'phone'})"><i class="fas fa-phone-alt"></i> 045-353-8852</a>
     </nav>
   </div>
-  <main>
+  <main style="padding-top:80px;">
     <!-- お知らせバー -->
     <div id="notice-bar" style="display:none;background:#fdf0f4;border-bottom:2px solid #f5c6d4;padding:.55rem 1rem;">
       <div style="max-width:900px;margin:0 auto;" id="notice-list"></div>
     </div>
     <script>
-    fetch('/notices.json?_=' + Date.now())
-      .then(r => r.json())
-      .then(items => {
-        if (!items || !items.length) return;
+    var SHEET_CSV = 'https://docs.google.com/spreadsheets/d/11m8-ysb5PBuoL3lcC4HeDEAMOQquu3Qud3u_mQ6AXAl/export?format=csv&gid=0';
+    fetch(SHEET_CSV + '&_=' + Date.now())
+      .then(r => r.text())
+      .then(csv => {
+        var lines = csv.trim().split('\n').slice(1); // 1行目（ヘッダー）をスキップ
+        if (!lines.length) return;
         var bar = document.getElementById('notice-bar');
         var list = document.getElementById('notice-list');
-        items.slice(0, 2).forEach(function(n) {
+        lines.slice(0, 2).forEach(function(line) {
+          var cols = line.split(',');
+          var date = (cols[0] || '').replace(/"/g,'').trim();
+          var text = cols.slice(1).join(',').replace(/"/g,'').trim();
+          if (!text) return;
           var d = document.createElement('p');
           d.style.cssText = 'margin:.15rem 0;font-size:.88rem;color:#7a3050;line-height:1.5;';
           d.innerHTML = '<i class="fas fa-bell" style="color:#e85b81;margin-right:.4em;font-size:.8em;"></i>'
-            + '<span style="color:#a05070;margin-right:.5em;font-size:.8em;">' + n.date + '</span>'
-            + n.text;
+            + (date ? '<span style="color:#a05070;margin-right:.5em;font-size:.8em;">' + date + '</span>' : '')
+            + text;
           list.appendChild(d);
         });
-        bar.style.display = 'block';
+        if (list.children.length) bar.style.display = 'block';
       })
       .catch(function(){});
     </script>
