@@ -48,8 +48,7 @@
         <li><a href="/access/" class="header__nav-link">アクセス</a></li>
         <li><a href="/faq/" class="header__nav-link">よくある質問</a></li>
       </ul></nav>
-      <a href="tel:045-353-8852" class="header__tel" aria-label="電話でお問い合わせ" onclick="gtag('event','tel_click',{'event_category':'contact','event_label':'phone'})"><i class="fas fa-phone-alt"></i><span>045-353-8852</span></a>
-      <button class="header__hamburger" id="hamburger" aria-label="メニューを開く" aria-expanded="false" aria-controls="mobileMenu"><span></span><span></span><span></span></button>
+      <div class="header__actions"><a href="tel:045-353-8852" class="header__tel" onclick="gtag('event','tel_click',{'event_category':'contact','event_label':'phone'})"><i class="fas fa-phone-alt"></i><span>045-353-8852</span></a><button class="header__burger" id="burger" aria-label="メニューを開く" aria-expanded="false"><span></span><span></span><span></span></button></div>
     </div>
   </header>
   <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
@@ -114,7 +113,7 @@
     });
 
   // ハンバーガーメニュー
-  var btn = document.getElementById('hamburger');
+  var btn = document.getElementById('burger');
   var menu = document.getElementById('mobileMenu');
   if (btn && menu) {
     btn.addEventListener('click', function() {
