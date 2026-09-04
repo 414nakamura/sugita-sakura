@@ -247,8 +247,7 @@
       <div style="max-width:900px;margin:0 auto;" id="notice-list"></div>
     </div>
     <script>
-    var SHEET_ID = '11m8-ysb5PBuoL3lcC4HeDEAMOQquu3Qud3u_mQ6AXAl';
-    var SHEET_CSV = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:csv&sheet=Sheet1';
+    var SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTyHX4EhyrJzZM5hSCLjeuMuCMgQdxOmswfPHmc-UngXgVk2faZME_r2iNxymfor_WXBwz30Tkl7rfh/pub?gid=0&single=true&output=csv';
     fetch(SHEET_CSV)
       .then(r => r.text())
       .then(csv => {
