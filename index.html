@@ -243,8 +243,11 @@
   </div>
   <main style="padding-top:80px;">
     <!-- お知らせバー -->
-    <div id="notice-bar" style="display:none;background:#fdf0f4;border-bottom:2px solid #f5c6d4;padding:.55rem 1rem;">
-      <div style="max-width:900px;margin:0 auto;" id="notice-list"></div>
+    <div id="notice-bar" style="display:none;background:#fdf0f4;border-bottom:2px solid #f5c6d4;padding:.5rem 1rem;">
+      <div style="max-width:900px;margin:0 auto;display:flex;align-items:flex-start;gap:.75rem;">
+        <span style="background:#e85b81;color:#fff;font-size:.75rem;font-weight:700;padding:.15rem .55rem;border-radius:3px;white-space:nowrap;margin-top:.15rem;">お知らせ</span>
+        <div id="notice-list" style="flex:1;min-width:0;"></div>
+      </div>
     </div>
     <script>
     var SHEET_CSV = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTyHX4EhyrJzZM5hSCLjeuMuCMgQdxOmswfPHmc-UngXgVk2faZME_r2iNxymfor_WXBwz30Tkl7rfh/pub?gid=0&single=true&output=csv';
@@ -265,7 +268,6 @@
           d.innerHTML = '<a href="/notices/" style="color:#7a3050;text-decoration:none;font-size:.88rem;display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">'
             + '<i class="fas fa-bell" style="color:#e85b81;margin-right:.4em;font-size:.8em;"></i>'
             + (date ? '<span style="color:#a05070;margin-right:.5em;">' + date + '</span>' : '')
-            + '<span style="color:#c0397a;font-weight:700;margin-right:.3em;">【お知らせ】</span>'
             + text + '</a>';
           list.appendChild(d);
         });
