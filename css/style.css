@@ -1314,7 +1314,7 @@ ul, ol {
 
 .hours__label {
   font-weight: 600;
-  text-align: left !important;
+  text-align: center !important;
   white-space: nowrap;
   color: var(--color-text);
 }
